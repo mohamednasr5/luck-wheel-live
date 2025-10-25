@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🎛️ لوحة تحكم دائرة الحظ | Eng Mohamed Hammad</title>
+  <style>
+    body {
+      font-family: "Cairo", sans-serif;
+      background: linear-gradient(135deg, #1e1b4b, #312e81);
+      color: white;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 2rem;
+      background: linear-gradient(90deg, #fbbf24, #f87171);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      display: none; /* مخفية حتى يتم إدخال كلمة السر */
+    }
+    input,
+    button {
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      margin: 5px;
+      font-family: inherit;
+    }
+    input {
+      width: 70%;
+      background: #2d3566;
+      color: white;
+    }
+    button {
+      cursor: pointer;
+    }
+    .btn-add {
+      background: #10b981;
+      color: white;
+    }
+    .btn-spin {
+      background: linear-gradient(135deg, #fbbf24, #f87171);
+      color: white;
+      font-weight: bold;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      background: #2b3360;
+      margin: 5px 0;
+      padding: 8px;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #lockScreen {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: #fbbf24;
+      font-size: 1.5rem;
+    }
+    #lockScreen input {
+      margin-top: 15px;
+      padding: 10px 15px;
+      font-size: 1.2rem;
+      border-radius: 8px;
+      border: 2px solid #fbbf24;
+      background: #1e1b4b;
+      color: white;
+      text-align: center;
+      width: 180px;
+    }
+    #lockScreen button {
+      margin-top: 15px;
+      background: #fbbf24;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="lockScreen">
+    <div>🔒 الرجاء إدخال كلمة السر للوصول إلى لوحة التحكم</div>
+    <input type="password" id="adminPass" placeholder="••••••" />
+    <button onclick="checkPassword()">تأكيد</button>
+  </div>
+
+  <h1>🎛️ لوحة تحكم دائرة الحظ</h1>
+
+  <div class="container" id="adminPanel">
+    <input type="text" id="playerName" placeholder="اكتب اسم اللاعب" />
+    <button class="btn-add" onclick="addPlayer()">➕ إضافة</button>
+    <ul id="playerList"></ul>
+    <button class="btn-spin" onclick="startSpin()">▶️ ابدأ الدوران</button>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js"></script>
+
+  <script>
+    // ✅ حماية بكلمة السر
+    function checkPassword() {
+      const pass = document.getElementById("adminPass").value.trim();
+      if (pass === "521988") {
+        document.getElementById("lockScreen").style.display = "none";
+        document.getElementById("adminPanel").style.display = "block";
+      } else {
+        alert("❌ كلمة السر غير صحيحة!");
+        document.getElementById("adminPass").value = "";
+      }
+    }
+
+    // إعداد Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAfMcEkpOXgWGE-1d8EVZAJJXXMNeh2thQ",
+      authDomain: "luck-wheel-7f514.firebaseapp.com",
+      databaseURL: "https://luck-wheel-7f514-default-rtdb.firebaseio.com",
+      projectId: "luck-wheel-7f514",
+      storageBucket: "luck-wheel-7f514.firebasestorage.app",
+      messagingSenderId: "845157453311",
+      appId: "1:845157453311:web:c7e9e884c8aa745885ebca",
+    };
+
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const nameInput = document.getElementById("playerName");
+    const list = document.getElementById("playerList");
+
+    // 🔁 عرض الأسماء المضافة
+    firebase.database().ref("wheel/players").on("value", (snapshot) => {
+      const players = snapshot.val() || {};
+      list.innerHTML = "";
+      Object.keys(players).forEach((id) => {
+        const li = document.createElement("li");
+        li.textContent = players[id].name;
+        const del = document.createElement("button");
+        del.textContent = "❌";
+        del.style.background = "#ef4444";
+        del.onclick = () =>
+          firebase.database().ref("wheel/players/" + id).remove();
+        li.appendChild(del);
+        list.appendChild(li);
+      });
+    });
+
+    // ➕ إضافة لاعب
+    function addPlayer() {
+      const name = nameInput.value.trim();
+      if (!name) return;
+      const id = Date.now();
+      firebase.database().ref("wheel/players/" + id).set({ name });
+      nameInput.value = "";
+    }
+
+    // ▶️ ابدأ الدوران
+    function startSpin() {
+      firebase.database().ref("wheel/players").once("value", (snap) => {
+        const players = Object.values(snap.val() || {});
+        if (players.length === 0) return alert("أضف لاعبين أولًا!");
+        const winner = players[Math.floor(Math.random() * players.length)].name;
+        const spins = 10 + Math.random() * 5;
+        const rotation = spins * 360 + Math.random() * 360;
+        firebase.database().ref("wheel/state").set({
+          rotation,
+          winner,
+          timestamp: Date.now(),
+        });
+        alert("🎉 تم اختيار الفائز: " + winner);
+      });
+    }
+  </script>
+</body>
+</html>
