@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎡 عجلة الحظ - مهندس محمد حماد | المشاهدة المباشرة</title>
+  <title>🎡 دائرة الحظ | المشاهدة المباشرة</title>
   <style>
     body {
       font-family: "Cairo", sans-serif;
@@ -21,15 +21,26 @@
       margin-top: 20px;
     }
     #wheel {
-      position: relative;
-      width: 420px;
-      height: 420px;
+      width: 400px;
+      height: 400px;
       margin: 50px auto;
       border-radius: 50%;
       border: 8px solid #fbbf24;
-      box-shadow: 0 0 50px rgba(251, 191, 36, 0.8), inset 0 0 30px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 0 50px rgba(251,191,36,0.8);
       transition: transform 3s ease-out;
       background: conic-gradient(#f87171, #4ECDC4, #FFE66D, #95E1D3);
+      position: relative;
+    }
+    .pointer {
+      width: 15px;
+      height: 25px;
+      background: #fbbf24;
+      clip-path: polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%);
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
     }
     .segment {
       position: absolute;
@@ -49,83 +60,28 @@
       max-width: 60px;
       text-align: center;
     }
-    .pointer {
-      width: 15px;
-      height: 25px;
-      background: #fbbf24;
-      clip-path: polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%);
-      position: absolute;
-      top: 15px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 5;
-    }
     #winnerBox {
       display: none;
       margin-top: 20px;
-      font-size: 2rem;
+      font-size: 1.8rem;
       font-weight: bold;
       color: #f87171;
       animation: popIn 1s ease forwards;
     }
     @keyframes popIn {
-      from { transform: scale(0.2); opacity: 0; }
+      from { transform: scale(0.3); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
-    }
-    .control-panel {
-      margin: 25px auto;
-      width: 300px;
-      background: rgba(255,255,255,0.1);
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.4);
-    }
-    input[type="range"] { width: 100%; cursor: pointer; }
-    button {
-      margin-top: 10px;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 8px;
-      background: linear-gradient(135deg, #fbbf24, #f87171);
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    button:hover { transform: scale(1.05); }
-
-    /* 🎆 Fireworks */
-    .firework {
-      position: fixed;
-      width: 6px;
-      height: 6px;
-      background: transparent;
-      border-radius: 50%;
-      pointer-events: none;
-      animation: explode 1s ease-out forwards;
-    }
-    @keyframes explode {
-      0% { opacity: 1; transform: scale(0.3); }
-      100% { opacity: 0; transform: scale(3); }
     }
   </style>
 </head>
 <body>
   <h1>🎡 دائرة الحظ المباشرة</h1>
-  <div class="pointer"></div>
-  <div id="wheel"></div>
-
+  <div id="wheel"><div class="pointer"></div></div>
   <div id="winnerBox">🎉 الفائز: <span id="winnerName"></span> 🎉</div>
 
-  <div class="control-panel">
-    <label>⏱️ مدة الدوران (بالثواني): <span id="durationValue">5</span> ث</label>
-    <input type="range" id="durationControl" min="1" max="180" value="5">
-    <button id="resetBtn">🧹 مسح الأسماء</button>
-  </div>
-
-  <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getDatabase, ref, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAfMcEkpOXgWGE-1d8EVZAJJXXMNeh2thQ",
@@ -143,35 +99,24 @@
     const wheel = document.getElementById("wheel");
     const winnerBox = document.getElementById("winnerBox");
     const winnerName = document.getElementById("winnerName");
-    const durationInput = document.getElementById("durationControl");
-    const durationValue = document.getElementById("durationValue");
-    const resetBtn = document.getElementById("resetBtn");
 
     let players = [];
-    let spinDuration = 5;
-    durationInput.addEventListener("input", () => {
-      spinDuration = parseInt(durationInput.value);
-      durationValue.textContent = spinDuration;
-    });
 
-    // 🔁 الأسماء
     onValue(ref(db, "wheel/players"), (snapshot) => {
       const data = snapshot.val() || {};
       players = Object.values(data);
       drawWheel(players);
     });
 
-    // 🔁 حالة الدوران
     onValue(ref(db, "wheel/state"), (snapshot) => {
       const data = snapshot.val();
-      if (data) spinWheel(data.rotation, data.winner);
+      if (data) spinWheel(data.rotation, data.winner, data.duration);
     });
 
-    // رسم الأسماء على الدائرة
     function drawWheel(players) {
       const count = players.length || 1;
       const angle = 360 / count;
-      wheel.innerHTML = "";
+      wheel.innerHTML = '<div class="pointer"></div>';
       players.forEach((p, i) => {
         const seg = document.createElement("div");
         seg.classList.add("segment");
@@ -181,50 +126,15 @@
       });
     }
 
-    // دوران + مؤثرات
-    function spinWheel(rotation, winner) {
+    function spinWheel(rotation, winner, duration) {
       winnerBox.style.display = "none";
-      wheel.style.transition = `transform ${spinDuration}s cubic-bezier(0.33,1,0.68,1)`;
+      wheel.style.transition = `transform ${duration}s cubic-bezier(0.33,1,0.68,1)`;
       wheel.style.transform = `rotate(${rotation}deg)`;
-
       setTimeout(() => {
         winnerBox.style.display = "block";
         winnerName.textContent = winner;
-        playSound();
-        showFireworks();
-      }, spinDuration * 1000);
+      }, duration * 1000);
     }
-
-    // 🔊 صوت الفوز
-    function playSound() {
-      const audio = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_2c4f5c55b1.mp3?filename=applause-44774.mp3");
-      audio.play().catch(()=>{});
-    }
-
-    // 🎆 ألعاب نارية
-    function showFireworks() {
-      for (let i = 0; i < 40; i++) {
-        const fw = document.createElement("div");
-        fw.className = "firework";
-        fw.style.left = Math.random() * 100 + "vw";
-        fw.style.top = Math.random() * 100 + "vh";
-        fw.style.background = `hsl(${Math.random()*360},100%,60%)`;
-        fw.style.animationDuration = (0.8 + Math.random()*0.7) + "s";
-        document.body.appendChild(fw);
-        setTimeout(() => fw.remove(), 1000);
-      }
-    }
-
-    // مسح الأسماء
-    resetBtn.onclick = () => {
-      if (confirm("⚠️ هل تريد حذف جميع الأسماء والفائز؟")) {
-        remove(ref(db, "wheel/players"));
-        remove(ref(db, "wheel/state"));
-        players = [];
-        drawWheel([]);
-        winnerBox.style.display = "none";
-      }
-    };
   </script>
 </body>
 </html>
