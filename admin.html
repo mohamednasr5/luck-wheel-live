@@ -35,12 +35,12 @@
     <button class="btn-spin" onclick="startSpin()">▶️ ابدأ الدوران</button>
   </div>
 
-  <!-- ✅ Firebase SDKs (إصدار حديث ومستقر) -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
+  <!-- ✅ Firebase SDKs (إصدار حديث 10.12.2) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, set, push, onValue, remove, get, child } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-  <script>
-    // 🔐 حماية بسيطة بكلمة السر
+    // 🔐 كلمة السر
     function checkPassword() {
       const pass = document.getElementById("adminPass").value.trim();
       if (pass === "521988") {
@@ -48,7 +48,6 @@
         document.getElementById("adminPanel").style.display = "block";
       } else {
         alert("❌ كلمة السر غير صحيحة!");
-        document.getElementById("adminPass").value = "";
       }
     }
 
@@ -60,67 +59,57 @@
       projectId: "luck-wheel-7f514",
       storageBucket: "luck-wheel-7f514.firebasestorage.app",
       messagingSenderId: "845157453311",
-      appId: "1:845157453311:web:c7e9e884c8aa745885ebca",
+      appId: "1:845157453311:web:c7e9e884c8aa745885ebca"
     };
 
-    // ✅ التهيئة باستخدام الإصدار الجديد
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
     const nameInput = document.getElementById("playerName");
     const list = document.getElementById("playerList");
 
     // 🔁 عرض اللاعبين بشكل حي
-    firebase.database().ref("wheel/players").on("value", (snapshot) => {
-      const players = snapshot.val() || {};
+    const playersRef = ref(db, "wheel/players");
+    onValue(playersRef, (snapshot) => {
+      const data = snapshot.val() || {};
       list.innerHTML = "";
-      Object.entries(players).forEach(([id, player]) => {
+      Object.entries(data).forEach(([id, player]) => {
         const li = document.createElement("li");
         li.textContent = player.name;
         const del = document.createElement("button");
         del.textContent = "❌";
         del.style.background = "#ef4444";
-        del.onclick = () => firebase.database().ref("wheel/players/" + id).remove();
+        del.onclick = () => remove(ref(db, "wheel/players/" + id));
         li.appendChild(del);
         list.appendChild(li);
       });
     });
 
-    // ➕ إضافة لاعب جديد
-    function addPlayer() {
+    // ➕ إضافة لاعب
+    window.addPlayer = function () {
       const name = nameInput.value.trim();
-      if (!name) {
-        alert("⚠️ اكتب اسم اللاعب أولاً");
-        return;
-      }
-      const id = Date.now();
-      firebase.database().ref("wheel/players/" + id).set({ name })
+      if (!name) return alert("⚠️ اكتب اسم اللاعب أولًا!");
+      const newRef = push(ref(db, "wheel/players"));
+      set(newRef, { name })
         .then(() => {
           nameInput.value = "";
-          console.log("✅ تمت الإضافة:", name);
+          alert("✅ تمت الإضافة: " + name);
         })
-        .catch(err => alert("❌ خطأ في الإرسال: " + err.message));
-    }
+        .catch((e) => alert("❌ خطأ في الإرسال: " + e.message));
+    };
 
     // ▶️ تشغيل العجلة
-    function startSpin() {
-      firebase.database().ref("wheel/players").once("value").then((snap) => {
+    window.startSpin = function () {
+      get(playersRef).then((snap) => {
         const players = Object.values(snap.val() || {});
-        if (players.length === 0) {
-          alert("⚠️ أضف لاعبين أولًا!");
-          return;
-        }
+        if (players.length === 0) return alert("⚠️ أضف لاعبين أولًا!");
         const winner = players[Math.floor(Math.random() * players.length)].name;
         const spins = 10 + Math.random() * 5;
         const rotation = spins * 360 + Math.random() * 360;
-        firebase.database().ref("wheel/state").set({
-          rotation,
-          winner,
-          timestamp: Date.now(),
-        });
+        set(ref(db, "wheel/state"), { rotation, winner, timestamp: Date.now() });
         alert("🎉 تم اختيار الفائز: " + winner);
       });
-    }
+    };
   </script>
 </body>
 </html>
