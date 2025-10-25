@@ -3,27 +3,34 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🎛️ لوحة تحكم دائرة الحظ | Eng Mohamed Hammad</title>
+  <title>🎛️ لوحة تحكم دائرة الحظ | Admin</title>
   <style>
     body {font-family:"Cairo",sans-serif;background:linear-gradient(135deg,#1e1b4b,#312e81);color:white;text-align:center;margin:0;padding:20px;}
-    h1 {font-size:2rem;background:linear-gradient(90deg,#fbbf24,#f87171);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    h1 {font-size:2rem;background:linear-gradient(90deg,#fbbf24,#f87171);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px;}
     .container {max-width:600px;margin:auto;display:none;}
     input,button {padding:10px;border:none;border-radius:8px;margin:5px;font-family:inherit;}
     input {width:70%;background:#2d3566;color:white;}
     button {cursor:pointer;}
     .btn-add {background:#10b981;color:white;}
     .btn-spin {background:linear-gradient(135deg,#fbbf24,#f87171);color:white;font-weight:bold;}
-    ul {list-style:none;padding:0;}
+    ul {list-style:none;padding:0;margin-top:10px;}
     li {background:#2b3360;margin:5px 0;padding:8px;border-radius:6px;display:flex;justify-content:space-between;align-items:center;}
-    #lockScreen {position:fixed;inset:0;background:rgba(0,0,0,0.9);display:flex;flex-direction:column;justify-content:center;align-items:center;color:#fbbf24;font-size:1.5rem;}
-    #lockScreen input {margin-top:15px;padding:10px 15px;font-size:1.2rem;border-radius:8px;border:2px solid #fbbf24;background:#1e1b4b;color:white;text-align:center;width:180px;}
-    #lockScreen button {margin-top:15px;background:#fbbf24;border:none;border-radius:8px;padding:10px 20px;font-size:1.1rem;cursor:pointer;}
+    #lockScreen {position:fixed;inset:0;background:rgba(0,0,0,0.9);display:flex;flex-direction:column;justify-content:center;align-items:center;color:#fbbf24;font-size:1.2rem;}
+    #lockScreen input {margin-top:12px;padding:10px 15px;font-size:1.05rem;border-radius:8px;border:2px solid #fbbf24;background:#1e1b4b;color:white;text-align:center;width:220px;}
+    #lockScreen button {margin-top:12px;background:#fbbf24;border:none;border-radius:8px;padding:10px 16px;font-size:1rem;cursor:pointer;}
+    .show-toggle {margin-top:8px;color:#dcdcdc;font-size:0.95rem; display:flex; gap:8px; align-items:center; justify-content:center;}
+    .show-toggle input[type="checkbox"] {width:16px;height:16px;cursor:pointer;}
   </style>
 </head>
 <body>
   <div id="lockScreen">
-    <div>🔒 الرجاء إدخال كلمة السر للوصول إلى لوحة التحكم</div>
-    <input type="password" id="adminPass" placeholder="••••••" />
+    <div style="font-size:1.25rem;">🔒 الرجاء إدخال كلمة السر للوصول إلى لوحة التحكم</div>
+    <!-- type هنا سيكون قابل للتبديل (password <-> text) -->
+    <input type="password" id="adminPass" placeholder="••••••" autofocus />
+    <div class="show-toggle">
+      <input type="checkbox" id="showPass" />
+      <label for="showPass">أظهر كلمة السر أثناء الكتابة</label>
+    </div>
     <button onclick="checkPassword()">تأكيد</button>
   </div>
 
@@ -35,23 +42,12 @@
     <button class="btn-spin" onclick="startSpin()">▶️ ابدأ الدوران</button>
   </div>
 
-  <!-- ✅ Firebase SDKs (إصدار حديث 10.12.2) -->
+  <!-- Firebase v10 (محمول كـ module) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getDatabase, ref, set, push, onValue, remove, get, child } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+    import { getDatabase, ref, push, set, onValue, remove, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-    // 🔐 كلمة السر
-    function checkPassword() {
-      const pass = document.getElementById("adminPass").value.trim();
-      if (pass === "521988") {
-        document.getElementById("lockScreen").style.display = "none";
-        document.getElementById("adminPanel").style.display = "block";
-      } else {
-        alert("❌ كلمة السر غير صحيحة!");
-      }
-    }
-
-    // 🔥 إعداد Firebase
+    // إعداد Firebase (تأكد أن هذا مطابق لملفك)
     const firebaseConfig = {
       apiKey: "AIzaSyAfMcEkpOXgWGE-1d8EVZAJJXXMNeh2thQ",
       authDomain: "luck-wheel-7f514.firebaseapp.com",
@@ -65,49 +61,83 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
+    // عناصر DOM
     const nameInput = document.getElementById("playerName");
     const list = document.getElementById("playerList");
+    const adminPassInput = document.getElementById("adminPass");
+    const showPassCheckbox = document.getElementById("showPass");
 
-    // 🔁 عرض اللاعبين بشكل حي
-    const playersRef = ref(db, "wheel/players");
-    onValue(playersRef, (snapshot) => {
-      const data = snapshot.val() || {};
-      list.innerHTML = "";
-      Object.entries(data).forEach(([id, player]) => {
-        const li = document.createElement("li");
-        li.textContent = player.name;
-        const del = document.createElement("button");
-        del.textContent = "❌";
-        del.style.background = "#ef4444";
-        del.onclick = () => remove(ref(db, "wheel/players/" + id));
-        li.appendChild(del);
-        list.appendChild(li);
-      });
+    // تبديل رؤية كلمة السر
+    showPassCheckbox.addEventListener("change", () => {
+      adminPassInput.type = showPassCheckbox.checked ? "text" : "password";
+      // إبقاء المؤشر في الحقل
+      adminPassInput.focus();
     });
 
-    // ➕ إضافة لاعب
-    window.addPlayer = function () {
+    // تحقق كلمة السر وبداية الوصول للوحة
+    window.checkPassword = function() {
+      const pass = adminPassInput.value.trim();
+      if (pass === "521988") {
+        document.getElementById("lockScreen").style.display = "none";
+        document.getElementById("adminPanel").style.display = "block";
+        // بعد الدخول، بدأ الاستماع للاعبين
+        startListeningPlayers();
+      } else {
+        alert("❌ كلمة السر غير صحيحة!");
+        adminPassInput.value = "";
+        adminPassInput.focus();
+      }
+    };
+
+    // استمع للتحديثات الحية لقائمة اللاعبين
+    let playersRef = ref(db, "wheel/players");
+    function startListeningPlayers() {
+      onValue(playersRef, snapshot => {
+        const data = snapshot.val() || {};
+        list.innerHTML = "";
+        Object.entries(data).forEach(([id, player]) => {
+          const li = document.createElement("li");
+          li.textContent = player.name;
+          const del = document.createElement("button");
+          del.textContent = "❌";
+          del.style.background = "#ef4444";
+          del.onclick = () => remove(ref(db, "wheel/players/" + id));
+          li.appendChild(del);
+          list.appendChild(li);
+        });
+      });
+    }
+
+    // إضافة لاعب
+    window.addPlayer = function() {
       const name = nameInput.value.trim();
-      if (!name) return alert("⚠️ اكتب اسم اللاعب أولًا!");
+      if (!name) {
+        alert("⚠️ اكتب اسم اللاعب أولاً!");
+        nameInput.focus();
+        return;
+      }
       const newRef = push(ref(db, "wheel/players"));
       set(newRef, { name })
         .then(() => {
           nameInput.value = "";
-          alert("✅ تمت الإضافة: " + name);
         })
-        .catch((e) => alert("❌ خطأ في الإرسال: " + e.message));
+        .catch(e => alert("❌ خطأ في الإضافة: " + e.message));
     };
 
-    // ▶️ تشغيل العجلة
-    window.startSpin = function () {
-      get(playersRef).then((snap) => {
+    // بدء الدوران (يكتب الحالة إلى wheel/state)
+    window.startSpin = function() {
+      get(playersRef).then(snap => {
         const players = Object.values(snap.val() || {});
-        if (players.length === 0) return alert("⚠️ أضف لاعبين أولًا!");
+        if (players.length === 0) {
+          alert("⚠️ أضف لاعبين أولًا!");
+          return;
+        }
         const winner = players[Math.floor(Math.random() * players.length)].name;
         const spins = 10 + Math.random() * 5;
         const rotation = spins * 360 + Math.random() * 360;
-        set(ref(db, "wheel/state"), { rotation, winner, timestamp: Date.now() });
-        alert("🎉 تم اختيار الفائز: " + winner);
+        set(ref(db, "wheel/state"), { rotation, winner, timestamp: Date.now() })
+          .then(() => alert("🎉 تم اختيار الفائز: " + winner))
+          .catch(e => alert("❌ خطأ في إرسال الحالة: " + e.message));
       });
     };
   </script>
