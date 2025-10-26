@@ -149,10 +149,13 @@
       padding: 25px;
       max-width: 380px;
       width: 90%;
+      max-height: 70vh;
       box-shadow: 0 0 80px rgba(255,20,147,0.9);
       animation: fadeIn 0.3s ease;
       z-index: 1000;
+      overflow-y: auto;
     }
+
     .players-panel.show { display: block !important; }
     .players-panel h2 { color: #32CD32; text-align: center; margin-bottom: 10px; }
     .player-item-panel {
@@ -162,6 +165,12 @@
       border-radius: 8px;
       border-left: 4px solid #32CD32;
       font-weight: bold;
+    }
+
+    .players-panel::-webkit-scrollbar { width: 8px; }
+    .players-panel::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #FFD700, #FF69B4);
+      border-radius: 10px;
     }
 
     #winnerBox {
@@ -207,6 +216,7 @@
     }
 
     @media (max-width: 600px) {
+      html, body { overflow: hidden; }
       #wheel { border-width: 8px; }
       .pointer { height: 30px; width: 15px; }
       .players-btn { padding: 10px 18px; font-size: 0.9rem; }
@@ -239,7 +249,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getDatabase, ref, onValue, set, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+    import { getDatabase, ref, onValue, set, remove, onDisconnect } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
     const config = {
       apiKey: "AIzaSyAfMcEkpOXgWGE-1d8EVZAJJXXMNeh2thQ",
@@ -265,18 +275,22 @@
 
     let players = [];
     let isSpinning = false;
-    let countdownInterval;
-    const viewerId = "viewer_" + Math.random().toString(36).substr(2, 9);
 
+    // 🟢 إنشاء معرّف عشوائي لكل زائر
+    const viewerId = "viewer_" + Math.random().toString(36).substr(2, 9);
     const viewerRef = ref(db, `wheel/viewers/${viewerId}`);
     set(viewerRef, { timestamp: Date.now() });
-    window.addEventListener("beforeunload", () => remove(viewerRef));
 
+    // 🟢 حذف الزائر فور خروجه من الصفحة
+    onDisconnect(viewerRef).remove();
+
+    // 🟢 عدّاد المشاهدين الحيّ
     onValue(ref(db, "wheel/viewers"), (snap) => {
       const data = snap.val() || {};
       viewersCount.textContent = Object.keys(data).length;
     });
 
+    // 🟢 اللاعبين
     onValue(ref(db, "wheel/players"), (snap) => {
       const data = snap.val() || {};
       players = Object.values(data);
@@ -284,12 +298,14 @@
       drawWheel(players);
     });
 
+    // 🟢 عرض اللاعبين
     playersBtn.addEventListener("click", () => {
       updatePlayersList();
       playersPanel.classList.add("show");
       setTimeout(() => playersPanel.classList.remove("show"), 5000);
     });
 
+    // 🟢 عند حدوث دوران
     onValue(ref(db, "wheel/state"), (snap) => {
       const data = snap.val();
       if (data && !isSpinning) {
