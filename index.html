@@ -3,46 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎡 دائرة الحظ - العرض المباشر</title>
+  <title>🎡 دائرة الحظ</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     body {
-      font-family: "Cairo", "Arial", sans-serif;
+      font-family: "Cairo", sans-serif;
       background: linear-gradient(135deg, #FF1493 0%, #FFD700 25%, #00CED1 50%, #FF69B4 75%, #32CD32 100%);
       background-size: 400% 400%;
       animation: gradientShift 8s ease infinite;
-      color: white;
       width: 100%;
       height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
       overflow: hidden;
       position: fixed;
       top: 0;
       left: 0;
+      color: white;
     }
-
     @keyframes gradientShift {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
-
     .container {
       width: 100%;
       height: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
       padding: 10px;
       overflow-y: auto;
-      overflow-x: hidden;
     }
-
     h1 {
       font-size: 2rem;
       margin: 8px 0 3px;
@@ -51,26 +41,19 @@
       -webkit-text-fill-color: transparent;
       animation: glow 2s ease-in-out infinite;
     }
-
     @keyframes glow {
       0%, 100% { filter: drop-shadow(0 0 10px rgba(255,215,0,0.5)); }
       50% { filter: drop-shadow(0 0 25px rgba(255,215,0,0.8)); }
     }
-
-    .subtitle { font-size: 0.9rem; margin-bottom: 8px; opacity: 0.9; }
-
+    .subtitle { font-size: 0.9rem; margin-bottom: 8px; }
     .info-section { display: flex; gap: 8px; justify-content: center; margin-bottom: 8px; flex-wrap: wrap; }
     .info-box { background: rgba(255,255,255,0.2); border: 2px solid #FFD700; border-radius: 8px; padding: 8px 12px; font-weight: bold; font-size: 0.8rem; }
     .info-box .number { font-size: 1.1rem; color: #FFD700; font-weight: 900; }
-
     .status { font-size: 0.9rem; margin-bottom: 4px; height: 20px; }
-
     .countdown-container { display: none; font-size: 0.85rem; margin-bottom: 6px; padding: 8px 15px; background: rgba(255,215,0,0.2); border: 2px solid #FFD700; border-radius: 8px; color: #FFD700; font-weight: bold; }
     .countdown-container.active { display: block; }
     .countdown-time { font-size: 1.5rem; color: #FFD700; font-weight: 900; }
-
     .wheel-container { width: 90%; max-width: 380px; aspect-ratio: 1; margin: 8px auto; filter: drop-shadow(0 0 40px rgba(255,215,0,0.4)); }
-
     #wheel {
       width: 100%;
       height: 100%;
@@ -81,7 +64,6 @@
       box-shadow: 0 0 60px rgba(255,215,0,0.6), inset 0 0 30px rgba(0,0,0,0.3);
       transition: transform 0s linear;
     }
-
     .pointer {
       width: 20px;
       height: 40px;
@@ -92,9 +74,7 @@
       left: 50%;
       transform: translateX(-50%);
       z-index: 20;
-      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
     }
-
     .segment {
       position: absolute;
       width: 100%;
@@ -105,7 +85,6 @@
       transform-origin: 50% 50%;
       padding-top: 40px;
     }
-
     .segment span {
       font-size: 14px;
       font-weight: bold;
@@ -113,9 +92,7 @@
       text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
       max-width: 70px;
       text-align: center;
-      line-height: 1.2;
     }
-
     #winnerBox {
       display: none;
       position: fixed;
@@ -125,58 +102,40 @@
       padding: 30px;
       background: linear-gradient(135deg, #FF1493, #FFD700, #00CED1, #FF69B4);
       background-size: 400% 400%;
-      animation: celebrateAppear 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards, gradientShift 3s ease infinite;
+      animation: celebrateAppear 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
       border-radius: 20px;
       border: 4px solid #32CD32;
-      box-shadow: 0 0 80px rgba(255,20,147,0.9), 0 0 150px rgba(0,206,209,0.7);
+      box-shadow: 0 0 80px rgba(255,20,147,0.9);
       width: 90%;
       max-width: 500px;
       z-index: 1000;
+      text-align: center;
     }
-
     @keyframes celebrateAppear {
       0% { transform: translate(-50%, -50%) scale(0) rotateZ(-180deg); opacity: 0; }
       70% { transform: translate(-50%, -50%) scale(1.15) rotateZ(10deg); opacity: 1; }
       100% { transform: translate(-50%, -50%) scale(1) rotateZ(0deg); opacity: 1; }
     }
-
-    .winner-text { font-size: 1.5rem; margin-bottom: 8px; animation: bounce 1s ease-in-out infinite; }
-
-    @keyframes bounce {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.2); }
-    }
-
+    .winner-text { font-size: 1.5rem; margin-bottom: 8px; }
     #winnerName {
       font-size: 2.2rem;
       font-weight: 900;
       color: #32CD32;
       text-shadow: 3px 3px 6px rgba(0,0,0,0.5), 0 0 20px rgba(50,205,50,0.8);
-      display: block;
       margin: 12px 0;
-      animation: winnerPop 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55), pulse 1.5s ease-in-out infinite;
-      word-wrap: break-word;
+      animation: winnerPop 0.8s ease;
     }
-
     @keyframes winnerPop {
-      0% { transform: scale(0) rotateY(180deg); }
-      100% { transform: scale(1) rotateY(0); }
+      0% { transform: scale(0); }
+      100% { transform: scale(1); }
     }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; }
-    }
-
     .winner-details {
       font-size: 1rem;
       margin-top: 8px;
       color: #fff;
       font-weight: 900;
-      animation: bounce 0.8s ease-in-out infinite;
       letter-spacing: 2px;
     }
-
     .confetti {
       position: fixed;
       width: 10px;
@@ -184,14 +143,11 @@
       background: #FFD700;
       pointer-events: none;
     }
-
     .medal { font-size: 1.8rem; animation: rotate 2s linear infinite; }
-
     @keyframes rotate {
       from { transform: rotateZ(0deg); }
       to { transform: rotateZ(360deg); }
     }
-
     .players-btn {
       position: fixed;
       left: 15px;
@@ -206,18 +162,14 @@
       cursor: pointer;
       font-size: 1rem;
       box-shadow: 0 0 20px rgba(255,215,0,0.6);
-      transition: all 0.3s ease;
       animation: pulse-btn 2s ease-in-out infinite;
     }
-
     @keyframes pulse-btn {
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.1); }
     }
-
     .players-btn:hover { transform: scale(1.15); }
     .players-btn:active { transform: scale(0.95); }
-
     .players-panel {
       display: none;
       position: fixed;
@@ -225,8 +177,6 @@
       left: 50%;
       transform: translate(-50%, -50%);
       background: linear-gradient(135deg, #FF1493, #FFD700, #00CED1, #FF69B4);
-      background-size: 400% 400%;
-      animation: gradientShift 3s ease infinite;
       border-radius: 20px;
       border: 4px solid #32CD32;
       padding: 30px;
@@ -237,23 +187,14 @@
       z-index: 2000;
       box-shadow: 0 0 100px rgba(255,20,147,0.9);
     }
-
-    .players-panel.show { display: block; animation: slideIn 0.4s ease; }
-
-    @keyframes slideIn {
-      from { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
-      to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-    }
-
+    .players-panel.show { display: block !important; }
     .players-panel h2 {
       font-size: 1.5rem;
       margin-bottom: 20px;
       color: #32CD32;
       text-shadow: 0 0 10px rgba(50,205,50,0.8);
     }
-
     .players-list-panel { list-style: none; }
-
     .player-item-panel {
       background: rgba(255,255,255,0.2);
       padding: 12px;
@@ -262,14 +203,7 @@
       border-left: 4px solid #32CD32;
       font-weight: bold;
       font-size: 1rem;
-      animation: slideInLeft 0.4s ease;
     }
-
-    @keyframes slideInLeft {
-      from { transform: translateX(-50px); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-
     .overlay {
       display: none;
       position: fixed;
@@ -280,15 +214,7 @@
       background: rgba(0,0,0,0.5);
       z-index: 1500;
     }
-
     .overlay.show { display: block; }
-
-    @media (max-width: 768px) {
-      h1 { font-size: 1.5rem; }
-      .segment span { font-size: 11px; }
-      #winnerName { font-size: 1.6rem; }
-      .players-btn { padding: 8px 12px; font-size: 0.8rem; }
-    }
   </style>
 </head>
 <body>
@@ -304,14 +230,9 @@
     </div>
     
     <div class="status" id="status"></div>
-    
     <div class="info-section">
-      <div class="info-box">
-        👥 المشاهدين: <span class="number" id="viewersCount">0</span>
-      </div>
-      <div class="info-box">
-        🎮 اللاعبين: <span class="number" id="playersCount">0</span>
-      </div>
+      <div class="info-box">👥 المشاهدين: <span class="number" id="viewersCount">0</span></div>
+      <div class="info-box">🎮 اللاعبين: <span class="number" id="playersCount">0</span></div>
     </div>
     
     <div class="countdown-container" id="countdownContainer">
@@ -319,15 +240,11 @@
     </div>
     
     <div class="wheel-container">
-      <div id="wheel">
-        <div class="pointer"></div>
-      </div>
+      <div id="wheel"><div class="pointer"></div></div>
     </div>
 
     <div id="winnerBox">
-      <div class="winner-text">
-        <span class="medal">🏆</span> الفائز الحظيظ <span class="medal">🏆</span>
-      </div>
+      <div class="winner-text"><span class="medal">🏆</span> الفائز الحظيظ <span class="medal">🏆</span></div>
       <span id="winnerName"></span>
       <div class="winner-details">مبروووووووووووك المكافأة! 🎉🎊🎆</div>
     </div>
@@ -337,7 +254,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getDatabase, ref, onValue, set, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-    const firebaseConfig = {
+    const config = {
       apiKey: "AIzaSyAfMcEkpOXgWGE-1d8EVZAJJXXMNeh2thQ",
       authDomain: "luck-wheel-7f514.firebaseapp.com",
       databaseURL: "https://luck-wheel-7f514-default-rtdb.firebaseio.com",
@@ -347,7 +264,7 @@
       appId: "1:845157453311:web:c7e9e884c8aa745885ebca"
     };
 
-    const app = initializeApp(firebaseConfig);
+    const app = initializeApp(config);
     const db = getDatabase(app);
 
     const wheel = document.getElementById("wheel");
@@ -368,7 +285,6 @@
     let countdownInterval;
     const viewerId = "viewer_" + Math.random().toString(36).substr(2, 9);
 
-    // التحكم بلوحة اللاعبين
     playersBtn.addEventListener("mousedown", () => {
       playersPanel.classList.add("show");
       overlay.classList.add("show");
@@ -389,28 +305,27 @@
       overlay.classList.remove("show");
     });
 
-    // تسجيل الزائر
     const viewerRef = ref(db, `wheel/viewers/${viewerId}`);
     set(viewerRef, { timestamp: Date.now() });
 
-    onValue(ref(db, "wheel/players"), (snapshot) => {
-      const data = snapshot.val() || {};
+    onValue(ref(db, "wheel/players"), (snap) => {
+      const data = snap.val() || {};
       players = Object.values(data);
       playersCount.textContent = players.length;
       drawWheel(players);
       updatePlayersList();
     });
 
-    onValue(ref(db, "wheel/state"), (snapshot) => {
-      const data = snapshot.val();
+    onValue(ref(db, "wheel/state"), (snap) => {
+      const data = snap.val();
       if (data && !isSpinning) {
         isSpinning = true;
         spinWheel(data.rotation, data.winner, data.duration);
       }
     });
 
-    onValue(ref(db, "wheel/viewers"), (snapshot) => {
-      const data = snapshot.val() || {};
+    onValue(ref(db, "wheel/viewers"), (snap) => {
+      const data = snap.val() || {};
       viewersCount.textContent = Object.keys(data).length;
     });
 
@@ -434,12 +349,10 @@
 
     function updatePlayersList() {
       if (players.length === 0) {
-        playersList.innerHTML = '<li class="player-item-panel" style="text-align: center;">لم يتم إضافة لاعبين</li>';
+        playersList.innerHTML = '<li class="player-item-panel">لم يتم إضافة لاعبين</li>';
         return;
       }
-      playersList.innerHTML = players.map((p, i) => 
-        `<li class="player-item-panel">🎮 ${i + 1}. ${p.name}</li>`
-      ).join('');
+      playersList.innerHTML = players.map((p, i) => `<li class="player-item-panel">🎮 ${i + 1}. ${p.name}</li>`).join('');
     }
 
     function spinWheel(rotation, winner, duration) {
@@ -468,6 +381,7 @@
         createFireworks();
         playWinnerSound();
         playCheers();
+        playRandomSounds();
         setTimeout(() => {
           isSpinning = false;
           status.textContent = "";
@@ -497,13 +411,13 @@
     }
 
     function createFireworks() {
-      for (let i = 0; i < 12; i++) {
+      for (let i = 0; i < 20; i++) {
         setTimeout(() => {
-          const x = window.innerWidth / 2 + (Math.random() - 0.5) * 400;
-          const y = window.innerHeight / 2;
+          const x = Math.random() * window.innerWidth;
+          const y = Math.random() * window.innerHeight;
           const colors = ["#FF1493", "#FFD700", "#00CED1", "#FF69B4", "#32CD32"];
           
-          for (let j = 0; j < 20; j++) {
+          for (let j = 0; j < 30; j++) {
             const spark = document.createElement("div");
             spark.className = "confetti";
             spark.style.left = x + "px";
@@ -511,19 +425,19 @@
             spark.style.background = colors[Math.floor(Math.random() * colors.length)];
             document.body.appendChild(spark);
 
-            const angle = (j / 20) * Math.PI * 2;
-            const distance = 150 + Math.random() * 100;
+            const angle = (j / 30) * Math.PI * 2;
+            const distance = 200 + Math.random() * 150;
             const targetX = x + Math.cos(angle) * distance;
             const targetY = y + Math.sin(angle) * distance;
 
             spark.animate([
               { transform: "translate(0,0) scale(1)", opacity: 1 },
               { transform: `translate(${targetX - x}px, ${targetY - y}px) scale(0)`, opacity: 0 }
-            ], { duration: 1000, easing: "ease-out" });
+            ], { duration: 1200, easing: "ease-out" });
 
-            setTimeout(() => spark.remove(), 1000);
+            setTimeout(() => spark.remove(), 1200);
           }
-        }, i * 200);
+        }, i * 150);
       }
     }
 
@@ -536,7 +450,6 @@
         gain.connect(ctx.destination);
         osc.frequency.setValueAtTime(800, ctx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
-        osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.5);
         gain.gain.setValueAtTime(0.3, ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
         osc.start(ctx.currentTime);
@@ -560,6 +473,26 @@
         noise.connect(gain);
         gain.connect(ctx.destination);
         noise.start();
+      } catch (e) {}
+    }
+
+    function playRandomSounds() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        for (let i = 0; i < 5; i++) {
+          setTimeout(() => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            const freq = 400 + Math.random() * 800;
+            osc.frequency.setValueAtTime(freq, ctx.currentTime);
+            gain.gain.setValueAtTime(0.1, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + 0.3);
+          }, i * 100);
+        }
       } catch (e) {}
     }
   </script>
