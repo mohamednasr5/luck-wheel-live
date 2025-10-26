@@ -3,45 +3,109 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎛️ لوحة التحكم | Eng Mohamed Hammad</title>
+  <title>🎛️ لوحة التحكم | دائرة الحظ</title>
   <style>
-    body {
-      font-family: "Cairo", sans-serif;
-      background: radial-gradient(circle at center, #1e1b4b 0%, #312e81 100%);
-      color: white;
-      text-align: center;
+    * {
       margin: 0;
-      padding-bottom: 60px;
+      padding: 0;
+      box-sizing: border-box;
     }
+
+    body {
+      font-family: "Cairo", "Arial", sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      color: white;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      animation: slideDown 0.6s ease;
+    }
+
+    @keyframes slideDown {
+      from { transform: translateY(-30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
     h1 {
-      font-size: 2rem;
-      background: linear-gradient(90deg, #fbbf24, #f87171);
+      font-size: 2.5rem;
+      background: linear-gradient(90deg, #FFD700, #FFA500, #FF69B4);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin: 20px 0;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
     }
+
+    .subtitle {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      letter-spacing: 1px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    .section {
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.2);
+      animation: fadeIn 0.8s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section h2 {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #FFD700;
+    }
+
+    .wheel-display {
+      text-align: center;
+    }
+
     #wheel {
-      width: 400px;
-      height: 400px;
-      margin: 20px auto;
+      width: 300px;
+      height: 300px;
+      margin: 0 auto 20px;
       border-radius: 50%;
-      border: 8px solid #fbbf24;
-      box-shadow: 0 0 50px rgba(251,191,36,0.8);
-      transition: transform 3s ease-out;
-      background: conic-gradient(#f87171, #4ECDC4, #FFE66D, #95E1D3);
+      border: 8px solid #FFD700;
+      background: conic-gradient(#FF6B6B, #4ECDC4, #FFE66D, #95E1D3, #FF8C42, #A8E6CF);
       position: relative;
+      box-shadow: 0 0 40px rgba(255,215,0,0.5), inset 0 0 20px rgba(0,0,0,0.2);
+      transition: transform 0s linear;
     }
+
     .pointer {
       width: 15px;
-      height: 25px;
-      background: #fbbf24;
+      height: 30px;
+      background: linear-gradient(90deg, #FFD700, #FFA500);
       clip-path: polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%);
       position: absolute;
-      top: -20px;
+      top: -25px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 10;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
     }
+
     .segment {
       position: absolute;
       width: 100%;
@@ -50,77 +114,315 @@
       align-items: flex-start;
       justify-content: center;
       transform-origin: 50% 50%;
-      padding-top: 25px;
+      padding-top: 20px;
     }
+
     .segment span {
-      font-size: 14px;
+      font-size: 12px;
       font-weight: bold;
       color: #fff;
-      text-shadow: 1px 1px 3px black;
-      max-width: 60px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+      max-width: 50px;
       text-align: center;
     }
-    .panel {
-      background: rgba(255,255,255,0.1);
-      border-radius: 10px;
+
+    .players-list {
+      background: rgba(0,0,0,0.2);
+      border-radius: 15px;
       padding: 15px;
-      margin: 20px auto;
-      max-width: 500px;
+      max-height: 250px;
+      overflow-y: auto;
+      margin: 20px 0;
     }
-    input, button {
-      font-family: inherit;
-      padding: 10px;
-      border-radius: 8px;
+
+    .player-item {
+      background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,165,0,0.1));
+      padding: 12px 15px;
+      margin: 8px 0;
+      border-radius: 10px;
+      border-left: 4px solid #FFD700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      animation: slideIn 0.3s ease;
+      transition: transform 0.2s ease;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(-20px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .player-item:hover {
+      transform: translateX(10px);
+      background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,165,0,0.2));
+    }
+
+    .player-name {
+      font-weight: 600;
+      flex: 1;
+    }
+
+    .delete-btn {
+      background: #FF6B6B;
       border: none;
-      margin: 5px;
-    }
-    input[type="text"] {
-      width: 70%;
-      background: #2d3566;
-      color: white;
-    }
-    button {
+      padding: 5px 10px;
+      border-radius: 6px;
       cursor: pointer;
-      background: linear-gradient(135deg, #fbbf24, #f87171);
+      font-size: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .delete-btn:hover {
+      background: #FF5252;
+      transform: scale(1.1);
+    }
+
+    .input-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 12px 15px;
+      border: 2px solid rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.1);
       color: white;
-      font-weight: bold;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 1rem;
+      transition: all 0.3s ease;
     }
-    button:hover { transform: scale(1.05); }
-    input[type="range"] { width: 100%; cursor: pointer; }
-    .winner-box {
-      display: none;
-      margin-top: 15px;
-      font-size: 1.8rem;
-      font-weight: bold;
-      color: #f87171;
-      animation: popIn 1s ease forwards;
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #FFD700;
+      background: rgba(255,255,255,0.2);
+      box-shadow: 0 0 15px rgba(255,215,0,0.3);
     }
-    @keyframes popIn {
-      from { transform: scale(0.3); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
+
+    input[type="text"]::placeholder {
+      color: rgba(255,255,255,0.6);
+    }
+
+    button {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 10px;
+      font-family: inherit;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      color: #333;
+      flex: 0.8;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255,215,0,0.4);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #FF6B6B, #FF8C42);
+      color: white;
+      width: 100%;
+      margin: 10px 0;
+    }
+
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255,107,107,0.4);
+    }
+
+    .btn-spin {
+      background: linear-gradient(135deg, #4ECDC4, #44A08D);
+      color: white;
+      width: 100%;
+      padding: 15px;
+      font-size: 1.1rem;
+      margin: 15px 0 0 0;
+    }
+
+    .btn-spin:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(78,205,196,0.4);
+    }
+
+    .btn-spin:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .control-group {
+      background: rgba(0,0,0,0.2);
+      border-radius: 15px;
+      padding: 20px;
+      margin: 15px 0;
+    }
+
+    .control-group label {
+      display: block;
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+
+    .duration-display {
+      font-size: 2rem;
+      color: #FFD700;
+      font-weight: 900;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 8px;
+      border-radius: 5px;
+      background: rgba(255,255,255,0.2);
+      outline: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+      margin: 15px 0;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(255,215,0,0.5);
+      transition: all 0.2s ease;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+      box-shadow: 0 0 20px rgba(255,215,0,0.7);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 0 10px rgba(255,215,0,0.5);
+    }
+
+    .status {
+      background: rgba(78,205,196,0.2);
+      border-left: 4px solid #4ECDC4;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+      font-weight: 600;
+    }
+
+    .status.error {
+      background: rgba(255,107,107,0.2);
+      border-left-color: #FF6B6B;
+    }
+
+    .status.success {
+      background: rgba(78,205,196,0.2);
+      border-left-color: #4ECDC4;
+    }
+
+    .players-count {
+      background: rgba(255,215,0,0.1);
+      border: 2px solid #FFD700;
+      padding: 15px;
+      border-radius: 10px;
+      font-size: 1.2rem;
+      margin: 15px 0;
+      text-align: center;
+    }
+
+    .players-count .number {
+      font-size: 2.5rem;
+      color: #FFD700;
+      font-weight: 900;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      #wheel {
+        width: 250px;
+        height: 250px;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>🎛️ لوحة التحكم ودائرة الحظ المتزامنة</h1>
-  <div id="wheel">
-    <div class="pointer"></div>
-  </div>
-  <div class="winner-box" id="winnerBox">🎉 الفائز: <span id="winnerName"></span> 🎉</div>
-
-  <div class="panel">
-    <input type="text" id="playerName" placeholder="اكتب اسم اللاعب">
-    <button id="addBtn">➕ إضافة</button>
-    <button id="clearBtn">🧹 مسح الأسماء</button>
+  <div class="header">
+    <h1>🎛️ لوحة التحكم</h1>
+    <div class="subtitle">دائرة الحظ المتزامنة</div>
   </div>
 
-  <div class="panel">
-    <label>⏱️ مدة الدوران (بالثواني): <span id="durationValue">5</span> ث</label>
-    <input type="range" id="durationControl" min="1" max="180" value="5">
-    <button id="spinBtn">▶️ ابدأ الدوران</button>
+  <div class="container">
+    <!-- القسم الأيسر: العجلة والتحكم -->
+    <div class="section wheel-display">
+      <h2>🎡 عجلة الحظ</h2>
+      <div id="wheel">
+        <div class="pointer"></div>
+      </div>
+      <div class="players-count">
+        <div>عدد اللاعبين</div>
+        <div class="number" id="playerCount">0</div>
+      </div>
+    </div>
+
+    <!-- القسم الأيمن: الإضافة والتحكم -->
+    <div class="section">
+      <h2>⚙️ إدارة اللاعبين</h2>
+
+      <div class="input-group">
+        <input type="text" id="playerName" placeholder="اكتب اسم اللاعب..." autocomplete="off">
+        <button class="btn-primary" id="addBtn">➕ إضافة</button>
+      </div>
+
+      <div class="players-list" id="playersList">
+        <div style="text-align: center; opacity: 0.7; padding: 20px;">لا يوجد لاعبين حتى الآن</div>
+      </div>
+
+      <button class="btn-secondary" id="clearBtn">🧹 مسح جميع الأسماء</button>
+
+      <h2 style="margin-top: 30px;">⏱️ إعدادات الدوران</h2>
+
+      <div class="control-group">
+        <label>مدة الدوران</label>
+        <div style="text-align: center;">
+          <div class="duration-display"><span id="durationValue">5</span> ثانية</div>
+        </div>
+        <input type="range" id="durationControl" min="1" max="180" value="5">
+      </div>
+
+      <button class="btn-spin" id="spinBtn">▶️ ابدأ الدوران</button>
+
+      <div id="statusMessage"></div>
+    </div>
   </div>
 
-  <!-- Firebase -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getDatabase, ref, set, onValue, push, remove, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
@@ -139,69 +441,109 @@
     const db = getDatabase(app);
 
     const wheel = document.getElementById("wheel");
-    const winnerBox = document.getElementById("winnerBox");
-    const winnerName = document.getElementById("winnerName");
+    const playersList = document.getElementById("playersList");
+    const playerCount = document.getElementById("playerCount");
     const durationInput = document.getElementById("durationControl");
     const durationValue = document.getElementById("durationValue");
+    const statusMessage = document.getElementById("statusMessage");
+    const spinBtn = document.getElementById("spinBtn");
 
     let players = [];
     let spinDuration = 5;
+    let isSpinning = false;
+    let playersData = {};
+
+    // تحديث مدة الدوران
     durationInput.addEventListener("input", () => {
       spinDuration = parseInt(durationInput.value);
       durationValue.textContent = spinDuration;
     });
 
-    // تحديث الأسماء
+    // تحديث الأسماء من Firebase
     onValue(ref(db, "wheel/players"), (snapshot) => {
       const data = snapshot.val() || {};
-      players = Object.values(data);
+      playersData = data;
+      players = Object.entries(data).map(([id, p]) => ({ id, ...p }));
+      playerCount.textContent = players.length;
       drawWheel(players);
+      updatePlayersList();
     });
 
-    // تحديث الحالة
+    // تحديث حالة الدوران
     onValue(ref(db, "wheel/state"), (snapshot) => {
       const data = snapshot.val();
-      if (data) spinWheel(data.rotation, data.winner, data.duration);
+      if (data && isSpinning === false) {
+        isSpinning = true;
+        spinWheel(data.rotation, data.duration);
+        setTimeout(() => { isSpinning = false; }, data.duration * 1000 + 500);
+      }
     });
 
-    // إضافة
+    // إضافة لاعب
     document.getElementById("addBtn").onclick = () => {
       const name = document.getElementById("playerName").value.trim();
-      if (!name) return alert("⚠️ اكتب الاسم أولاً");
+      if (!name) {
+        showStatus("⚠️ اكتب اسم اللاعب أولاً", "error");
+        return;
+      }
       set(push(ref(db, "wheel/players")), { name });
       document.getElementById("playerName").value = "";
+      showStatus("✅ تم إضافة اللاعب بنجاح", "success");
     };
 
-    // مسح
+    // مسح جميع الأسماء
     document.getElementById("clearBtn").onclick = () => {
-      if (confirm("⚠️ هل تريد حذف جميع الأسماء؟")) {
+      if (confirm("⚠️ هل أنت متأكد؟ سيتم حذف جميع الأسماء!")) {
         remove(ref(db, "wheel/players"));
         remove(ref(db, "wheel/state"));
-        players = [];
-        drawWheel([]);
+        showStatus("🧹 تم مسح جميع البيانات", "success");
       }
     };
 
-    // دوران
+    // حذف لاعب واحد
+    function deletePlayer(id) {
+      remove(ref(db, `wheel/players/${id}`));
+    }
+
+    // بدء الدوران
     document.getElementById("spinBtn").onclick = async () => {
-      if (players.length === 0) return alert("⚠️ لا يوجد لاعبين!");
-      const snapshot = await get(ref(db, "wheel/players"));
-      const data = snapshot.val();
-      const arr = Object.values(data);
-      const winner = arr[Math.floor(Math.random() * arr.length)].name;
+      if (players.length === 0) {
+        showStatus("⚠️ لا يوجد لاعبين! أضف لاعبين أولاً", "error");
+        return;
+      }
+      if (isSpinning) {
+        showStatus("⏳ جاري الدوران الآن... انتظر قليلاً", "error");
+        return;
+      }
+
+      spinBtn.disabled = true;
+      showStatus("🎬 جاري بدء الدوران...", "success");
+
+      const winner = players[Math.floor(Math.random() * players.length)].name;
       const rotation = (10 + Math.random() * 5) * 360 + Math.random() * 360;
+
       await set(ref(db, "wheel/state"), {
         rotation,
         winner,
         duration: spinDuration,
         timestamp: Date.now()
       });
+
+      setTimeout(() => {
+        spinBtn.disabled = false;
+      }, spinDuration * 1000 + 1000);
     };
 
     function drawWheel(players) {
-      const count = players.length || 1;
+      if (players.length === 0) {
+        wheel.innerHTML = '<div class="pointer"></div>';
+        return;
+      }
+
+      const count = players.length;
       const angle = 360 / count;
       wheel.innerHTML = '<div class="pointer"></div>';
+
       players.forEach((p, i) => {
         const seg = document.createElement("div");
         seg.classList.add("segment");
@@ -211,15 +553,40 @@
       });
     }
 
-    function spinWheel(rotation, winner, duration) {
-      winnerBox.style.display = "none";
-      wheel.style.transition = `transform ${duration}s cubic-bezier(0.33,1,0.68,1)`;
+    function spinWheel(rotation, duration) {
+      wheel.style.transition = `transform ${duration}s cubic-bezier(0.33, 1, 0.68, 1)`;
       wheel.style.transform = `rotate(${rotation}deg)`;
-      setTimeout(() => {
-        winnerBox.style.display = "block";
-        winnerName.textContent = winner;
-      }, duration * 1000);
     }
+
+    function updatePlayersList() {
+      if (players.length === 0) {
+        playersList.innerHTML = '<div style="text-align: center; opacity: 0.7; padding: 20px;">لا يوجد لاعبين حتى الآن</div>';
+        return;
+      }
+
+      playersList.innerHTML = players.map(p => `
+        <div class="player-item">
+          <span class="player-name">👤 ${p.name}</span>
+          <button class="delete-btn" onclick="deletePlayer('${p.id}')">✕ حذف</button>
+        </div>
+      `).join('');
+
+      window.deletePlayer = deletePlayer;
+    }
+
+    function showStatus(message, type) {
+      statusMessage.innerHTML = `<div class="status ${type}">${message}</div>`;
+      setTimeout(() => {
+        statusMessage.innerHTML = '';
+      }, 3000);
+    }
+
+    // Enter للإضافة السريعة
+    document.getElementById("playerName").addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        document.getElementById("addBtn").click();
+      }
+    });
   </script>
 </body>
 </html>
