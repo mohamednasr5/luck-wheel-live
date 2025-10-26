@@ -285,10 +285,31 @@
       }
     }
 
-    @media (max-width: 480px) {
-      h1 {
-        font-size: 2rem;
-      }
+    .info-section {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .info-box {
+      background: rgba(255,255,255,0.2);
+      border: 2px solid #FFD700;
+      border-radius: 10px;
+      padding: 15px 25px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+
+    .info-box .number {
+      font-size: 1.8rem;
+      color: #FFD700;
+      font-weight: 900;
+    }
 
       .subtitle {
         font-size: 0.9rem;
@@ -346,6 +367,15 @@
     
     <div class="status" id="status"></div>
     
+    <div class="info-section">
+      <div class="info-box">
+        👥 المشاهدين: <span class="number" id="viewersCount">0</span>
+      </div>
+      <div class="info-box">
+        🎮 اللاعبين: <span class="number" id="playersCount">0</span>
+      </div>
+    </div>
+    
     <div class="countdown-container" id="countdownContainer">
       توقف العجلة بعد: <div class="countdown-time" id="countdownTime">0</div>
     </div>
@@ -367,7 +397,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+    import { getDatabase, ref, onValue, set, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAfMcEkpOXgWGE-1d8EVZAJJXXMNeh2thQ",
@@ -388,14 +418,18 @@
     const status = document.getElementById("status");
     const countdownContainer = document.getElementById("countdownContainer");
     const countdownTime = document.getElementById("countdownTime");
+    const viewersCount = document.getElementById("viewersCount");
+    const playersCount = document.getElementById("playersCount");
 
     let players = [];
     let isSpinning = false;
     let countdownInterval;
+    const viewerId = "viewer_" + Math.random().toString(36).substr(2, 9);
 
     onValue(ref(db, "wheel/players"), (snapshot) => {
       const data = snapshot.val() || {};
       players = Object.values(data);
+      playersCount.textContent = players.length;
       drawWheel(players);
     });
 
@@ -405,6 +439,22 @@
         isSpinning = true;
         spinWheel(data.rotation, data.winner, data.duration);
       }
+    });
+
+    // تسجيل الزائر ومراقبة عدد المشاهدين
+    const viewerRef = ref(db, `wheel/viewers/${viewerId}`);
+    set(viewerRef, { timestamp: Date.now() });
+
+    // تحديث عدد المشاهدين
+    onValue(ref(db, "wheel/viewers"), (snapshot) => {
+      const data = snapshot.val() || {};
+      const count = Object.keys(data).length;
+      viewersCount.textContent = count;
+    });
+
+    // حذف الزائر عند إغلاق الصفحة
+    window.addEventListener("beforeunload", () => {
+      remove(viewerRef);
     });
 
     function drawWheel(players) {
