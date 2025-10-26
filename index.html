@@ -36,7 +36,6 @@
       50%{filter:drop-shadow(0 0 25px rgba(255,105,180,1))}
     }
 
-    /* زر الصوت في الزاوية اليمنى العليا */
     .sound-toggle{
       position:fixed;top:10px;right:12px;z-index:110;
       width:40px;height:40px;border-radius:50%;
@@ -49,7 +48,6 @@
     .sound-toggle span{font-size:1.1rem;filter:drop-shadow(0 0 6px rgba(255,215,0,.9))}
     .subtitle{font-size:1rem;margin-top:58px;margin-bottom:8px;opacity:.9;text-shadow:0 0 5px #000}
 
-    /* إشعار ذهبي عائم في الزاوية اليمنى العليا */
     .toast{
       position:fixed;top:60px;right:12px;z-index:120;
       background:linear-gradient(135deg,rgba(255,215,0,.95),rgba(255,105,180,.95));
@@ -136,13 +134,9 @@
   </style>
 </head>
 <body>
-  <!-- شريط علوي وهمي للمحاذاة + زر الصوت في اليمين -->
-  <div class="topbar">
-    <h1 class="title">🎡 دائرة الحظ</h1>
-  </div>
-  <button id="soundToggle" class="sound-toggle" aria-label="Toggle Sound" title="تشغيل/كتم الصوت"><span id="soundIcon">🔈</span></button>
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
-
+  <div class="topbar"><h1 class="title">🎡 دائرة الحظ</h1></div>
+  <button id="soundToggle" class="sound-toggle" title="تشغيل/كتم الصوت"><span id="soundIcon">🔈</span></button>
+  <div id="toast" class="toast"></div>
   <div class="subtitle">العرض المباشر بإشراف المهندس محمد</div>
 
   <div class="info-section">
@@ -155,7 +149,7 @@
   </div>
 
   <div class="wheel-wrapper">
-    <div class="fixed-pointer" aria-hidden="true"></div>
+    <div class="fixed-pointer"></div>
     <div class="wheel-container">
       <div id="wheel"></div>
       <div id="winnerBox">
@@ -174,9 +168,8 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getDatabase, ref, onValue, set, remove, onDisconnect } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+    import { getDatabase, ref, onValue, set, onDisconnect } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-    /* ========= Firebase ========= */
     const config = {
       apiKey:"AIzaSyAfMcEkpOXgWGE-1d8EVZAJJXXMNeh2thQ",
       authDomain:"luck-wheel-7f514.firebaseapp.com",
@@ -189,205 +182,158 @@
     const app = initializeApp(config);
     const db  = getDatabase(app);
 
-    /* ========= Elements ========= */
-    const wheel            = document.getElementById("wheel");
-    const winnerBox        = document.getElementById("winnerBox");
-    const winnerNameEl     = document.getElementById("winnerName");
-    const viewersCountEl   = document.getElementById("viewersCount");
-    const playersCountEl   = document.getElementById("playersCount");
-    const playersBtn       = document.getElementById("playersBtn");
-    const playersPanel     = document.getElementById("playersPanel");
-    const playersList      = document.getElementById("playersList");
-    const countdownCont    = document.getElementById("countdownContainer");
-    const countdownTimeEl  = document.getElementById("countdownTime");
-    const soundToggleBtn   = document.getElementById("soundToggle");
-    const soundIcon        = document.getElementById("soundIcon");
-    const toastEl          = document.getElementById("toast");
+    const wheel = document.getElementById("wheel");
+    const winnerBox = document.getElementById("winnerBox");
+    const winnerNameEl = document.getElementById("winnerName");
+    const viewersCountEl = document.getElementById("viewersCount");
+    const playersCountEl = document.getElementById("playersCount");
+    const playersBtn = document.getElementById("playersBtn");
+    const playersPanel = document.getElementById("playersPanel");
+    const playersList = document.getElementById("playersList");
+    const countdownCont = document.getElementById("countdownContainer");
+    const countdownTimeEl = document.getElementById("countdownTime");
+    const soundToggleBtn = document.getElementById("soundToggle");
+    const soundIcon = document.getElementById("soundIcon");
+    const toastEl = document.getElementById("toast");
 
-    /* ========= State ========= */
     let players = [];
     let isSpinning = false;
     let countdownInterval = null;
     let tickInterval = null;
     let isMuted = false;
 
-    /* ========= Audio (روابط عامة) ========= */
-    const drumRoll = new Audio("https://cdn.pixabay.com/download/audio/2023/10/04/audio_10062.mp3?filename=drumroll-10062.mp3");
-    const woodenTickSrc = "https://cdn.pixabay.com/download/audio/2023/03/15/audio_100248.mp3?filename=wood-click-1-100248.mp3";
-    const applause = new Audio("https://cdn.pixabay.com/download/audio/2023/03/10/audio_31e13b1882.mp3?filename=applause-cheering-14677.mp3");
-    const celebrationMusic = new Audio("https://cdn.pixabay.com/download/audio/2022/10/18/audio_5cbf36b08c.mp3?filename=party-horn-and-crowd-11245.mp3");
+    /* ========= Audio (روابط GitHub) ========= */
+    const drumRoll = new Audio("https://raw.githubusercontent.com/mohamednasr5/luck-wheel-live/main/drum-roll-sound-effect-.mp3");
+    const woodenTickSrc = "https://raw.githubusercontent.com/mohamednasr5/luck-wheel-live/main/clock-ticking-down-.mp3";
+    const applause = new Audio("https://raw.githubusercontent.com/mohamednasr5/luck-wheel-live/main/applause-.mp3");
+    const celebrationMusic = new Audio("https://raw.githubusercontent.com/mohamednasr5/luck-wheel-live/main/party-blower-sounds.mp3");
     celebrationMusic.loop = false;
     [drumRoll, applause, celebrationMusic].forEach(a=>{a.volume=.85});
 
-    // تفعيل الصوت بعد أول تفاعل (لسياسات المتصفح)
     let soundUnlocked=false;
-    const unlock=()=>{ if(soundUnlocked) return; const s=new Audio(woodenTickSrc); s.volume=0.001; s.play().finally(()=>{soundUnlocked=true}); document.removeEventListener("click",unlock); document.removeEventListener("touchstart",unlock); };
-    document.addEventListener("click",unlock,{once:true}); document.addEventListener("touchstart",unlock,{once:true});
+    const unlock=()=>{if(soundUnlocked)return;const s=new Audio(woodenTickSrc);s.volume=0.001;s.play().finally(()=>{soundUnlocked=true});document.removeEventListener("click",unlock);document.removeEventListener("touchstart",unlock);};
+    document.addEventListener("click",unlock,{once:true});
+    document.addEventListener("touchstart",unlock,{once:true});
 
-    /* ========= Mute / Unmute + Toast ========= */
     function applyMuteState(){
-      [drumRoll, applause, celebrationMusic].forEach(a=>{ a.muted = isMuted; });
-      soundIcon.textContent = isMuted ? "🔇" : "🔈";
-      showToast(isMuted ? "🔇 الصوت مغلق" : "🔈 الصوت مفعل");
+      [drumRoll, applause, celebrationMusic].forEach(a=>{a.muted=isMuted});
+      soundIcon.textContent=isMuted?"🔇":"🔈";
+      showToast(isMuted?"🔇 الصوت مغلق":"🔈 الصوت مفعل");
     }
-    soundToggleBtn.addEventListener("click",()=>{
-      isMuted = !isMuted; applyMuteState();
-    });
+    soundToggleBtn.addEventListener("click",()=>{isMuted=!isMuted;applyMuteState();});
     function showToast(text){
-      toastEl.textContent = text;
-      toastEl.classList.add("show");
+      toastEl.textContent=text;toastEl.classList.add("show");
       clearTimeout(showToast._t);
-      showToast._t = setTimeout(()=> toastEl.classList.remove("show"), 2000);
+      showToast._t=setTimeout(()=>toastEl.classList.remove("show"),2000);
     }
 
-    /* ========= Live Viewers ========= */
-    const viewerId  = "viewer_" + Math.random().toString(36).slice(2,11);
-    const viewerRef = ref(db, `wheel/viewers/${viewerId}`);
-    set(viewerRef, { timestamp: Date.now() });
-    onDisconnect(viewerRef).remove();
-
-    onValue(ref(db,"wheel/viewers"), snap=>{
-      const data = snap.val() || {};
-      viewersCountEl.textContent = Object.keys(data).length;
+    const viewerId="viewer_"+Math.random().toString(36).slice(2,11);
+    const viewerRef=ref(db,`wheel/viewers/${viewerId}`);
+    const connectedRef=ref(db,'.info/connected');
+    onValue(connectedRef,snap=>{
+      if(snap.val()===true){set(viewerRef,{timestamp:Date.now()});onDisconnect(viewerRef).remove();}
+    });
+    onValue(ref(db,"wheel/viewers"),snap=>{
+      const data=snap.val()||{};viewersCountEl.textContent=Object.keys(data).length;
     });
 
-    /* ========= Players ========= */
-    onValue(ref(db,"wheel/players"), snap=>{
-      const data = snap.val() || {};
-      players = Object.values(data);
-      playersCountEl.textContent = players.length;
-      drawWheel(players);
+    onValue(ref(db,"wheel/players"),snap=>{
+      const data=snap.val()||{};players=Object.values(data);
+      playersCountEl.textContent=players.length;drawWheel(players);
     });
 
-    playersBtn.addEventListener("click", ()=>{
-      updatePlayersList();
-      playersPanel.classList.add("show");
-      setTimeout(()=>playersPanel.classList.remove("show"), 5000);
+    playersBtn.addEventListener("click",()=>{
+      updatePlayersList();playersPanel.classList.add("show");
+      setTimeout(()=>playersPanel.classList.remove("show"),5000);
     });
-
     function updatePlayersList(){
       if(!players.length){
-        playersList.innerHTML = '<div class="player-item-panel">🎮 لا يوجد لاعبين حاليًا</div>';
-        return;
+        playersList.innerHTML='<div class="player-item-panel">🎮 لا يوجد لاعبين حاليًا</div>';return;
       }
-      playersList.innerHTML = players.map((p,i)=>`<div class="player-item-panel">🎯 ${i+1}. ${p.name}</div>`).join("");
+      playersList.innerHTML=players.map((p,i)=>`<div class="player-item-panel">🎯 ${i+1}. ${p.name}</div>`).join("");
     }
 
-    /* ========= Draw Wheel ========= */
     function drawWheel(players){
-      wheel.innerHTML = "";
-      if(!players.length) return;
-      const count = players.length;
-      const angle = 360 / count;
-      const dynFont = Math.max(11, Math.min(20, Math.floor(220 / count)));
+      wheel.innerHTML="";
+      if(!players.length)return;
+      const count=players.length;const angle=360/count;
+      const dynFont=Math.max(11,Math.min(20,Math.floor(220/count)));
       for(let i=0;i<count;i++){
-        const seg = document.createElement("div");
-        seg.className = "segment";
-        seg.style.transform = `rotate(${i*angle}deg)`;
-        const span = document.createElement("span");
-        span.style.transform = `rotate(${-i*angle}deg)`;
-        span.style.fontSize = dynFont + "px";
-        span.textContent = players[i].name;
-        seg.appendChild(span);
-        wheel.appendChild(seg);
+        const seg=document.createElement("div");
+        seg.className="segment";seg.style.transform=`rotate(${i*angle}deg)`;
+        const span=document.createElement("span");
+        span.style.transform=`rotate(${-i*angle}deg)`;span.style.fontSize=dynFont+"px";
+        span.textContent=players[i].name;seg.appendChild(span);wheel.appendChild(seg);
       }
     }
 
-    /* ========= Listen to spin state ========= */
-    onValue(ref(db,"wheel/state"), snap=>{
-      const data = snap.val();
-      if(data && !isSpinning){
-        isSpinning = true;
-        spinWheel(data.rotation, data.winner, data.duration);
-      }
+    onValue(ref(db,"wheel/state"),snap=>{
+      const data=snap.val();
+      if(data&&!isSpinning){isSpinning=true;spinWheel(data.rotation,data.winner,data.duration);}
     });
 
-    /* ========= Spin with sounds ========= */
-    function spinWheel(rotation, winner, duration){
-      try{ drumRoll.currentTime=0; if(!isMuted) drumRoll.play().catch(()=>{});}catch(e){}
-      if(countdownInterval) clearInterval(countdownInterval);
-      if(tickInterval) clearInterval(tickInterval);
-
-      winnerBox.style.display="none";
-      countdownCont.style.display="block";
-      let remaining = Math.max(0, Math.floor(duration));
-      countdownTimeEl.textContent = remaining;
-      countdownInterval = setInterval(()=>{
-        remaining--;
-        countdownTimeEl.textContent = remaining;
-        if(remaining<=0) clearInterval(countdownInterval);
+    function spinWheel(rotation,winner,duration){
+      try{drumRoll.currentTime=0;if(!isMuted)drumRoll.play().catch(()=>{});}catch(e){}
+      if(countdownInterval)clearInterval(countdownInterval);
+      if(tickInterval)clearInterval(tickInterval);
+      winnerBox.style.display="none";countdownCont.style.display="block";
+      let remaining=Math.max(0,Math.floor(duration));
+      countdownTimeEl.textContent=remaining;
+      countdownInterval=setInterval(()=>{
+        remaining--;countdownTimeEl.textContent=remaining;
+        if(remaining<=0)clearInterval(countdownInterval);
       },1000);
 
-      // دوران العجلة
-      wheel.style.transition = `transform ${duration}s cubic-bezier(0.33,1,0.68,1)`;
-      wheel.style.transform  = `rotate(${rotation}deg)`;
-
-      // صوت احتكاك خشبي سريع طوال الدوران
-      const tickMs = 120;
-      const start = performance.now();
-      tickInterval = setInterval(()=>{
-        if(isMuted) return; // لا تُصدر صوت إن كان كاتم
-        const t = new Audio(woodenTickSrc);
-        t.volume=.28; t.play().catch(()=>{});
-        if(performance.now()-start > duration*1000){ clearInterval(tickInterval); }
-      }, tickMs);
+      wheel.style.transition=`transform ${duration}s cubic-bezier(0.33,1,0.68,1)`;
+      wheel.style.transform=`rotate(${rotation}deg)`;
+      const tickMs=120;const start=performance.now();
+      tickInterval=setInterval(()=>{
+        if(isMuted)return;
+        const t=new Audio(woodenTickSrc);t.volume=.28;t.play().catch(()=>{});
+        if(performance.now()-start>duration*1000){clearInterval(tickInterval);}
+      },tickMs);
 
       setTimeout(()=>{
         countdownCont.style.display="none";
-        try{ drumRoll.pause(); drumRoll.currentTime=0; }catch(e){}
-        if(tickInterval) clearInterval(tickInterval);
-        showWinner(winner);
-        isSpinning=false;
-      }, duration*1000);
+        try{drumRoll.pause();drumRoll.currentTime=0;}catch(e){}
+        if(tickInterval)clearInterval(tickInterval);
+        showWinner(winner);isSpinning=false;
+      },duration*1000);
     }
 
-    /* ========= Winner: fireworks 10s + music only during fireworks ========= */
     function showWinner(name){
-      winnerBox.style.display="block";
-      winnerNameEl.textContent = name;
-
+      winnerBox.style.display="block";winnerNameEl.textContent=name;
       if(!isMuted){
-        try{ celebrationMusic.currentTime=0; celebrationMusic.play().catch(()=>{});}catch(e){}
-        try{ applause.currentTime=0; applause.play().catch(()=>{});}catch(e){}
+        try{celebrationMusic.currentTime=0;celebrationMusic.play().catch(()=>{});}catch(e){}
+        try{applause.currentTime=0;applause.play().catch(()=>{});}catch(e){}
       }
-      playFireworks(10000, ()=>{
-        try{ celebrationMusic.pause(); celebrationMusic.currentTime=0; }catch(e){}
-      });
+      playFireworks(10000,()=>{try{celebrationMusic.pause();celebrationMusic.currentTime=0;}catch(e){}});
     }
 
-    function playFireworks(durationMs=10000, onDone=()=>{}){
-      const colors = ["#FFD700","#FF69B4","#00CED1","#32CD32"];
-      const start = performance.now();
-      let last = 0, every = 150;
+    function playFireworks(durationMs=10000,onDone=()=>{}){
+      const colors=["#FFD700","#FF69B4","#00CED1","#32CD32"];
+      const start=performance.now();let last=0,every=150;
       function frame(now){
-        if(now-last >= every){
-          last = now;
-          const x = Math.random()*window.innerWidth;
-          const y = Math.random()*window.innerHeight*0.55;
-          const color = colors[Math.floor(Math.random()*colors.length)];
-          const particles = 22;
+        if(now-last>=every){
+          last=now;const x=Math.random()*window.innerWidth;
+          const y=Math.random()*window.innerHeight*0.55;
+          const color=colors[Math.floor(Math.random()*colors.length)];
+          const particles=22;
           for(let j=0;j<particles;j++){
-            const spark = document.createElement("div");
-            spark.className="firework";
-            spark.style.left = x+"px"; spark.style.top = y+"px";
-            spark.style.background = color;
-            document.body.appendChild(spark);
-            const angle = (Math.PI*2*j)/particles;
-            const distance = 120 + Math.random()*160;
-            spark.animate([
-              { transform:"translate(0,0) scale(1)", opacity:1 },
-              { transform:`translate(${Math.cos(angle)*distance}px, ${Math.sin(angle)*distance}px) scale(0)`, opacity:0 }
-            ],{duration:1200,easing:"ease-out"});
-            setTimeout(()=>spark.remove(),1250);
+            const spark=document.createElement("div");
+            spark.className="firework";spark.style.left=x+"px";spark.style.top=y+"px";
+            spark.style.background=color;document.body.appendChild(spark);
+            const angle=(Math.PI*2*j)/particles;const distance=120+Math.random()*160;
+            spark.animate([{transform:"translate(0,0) scale(1)",opacity:1},
+            {transform:`translate(${Math.cos(angle)*distance}px,${Math.sin(angle)*distance}px) scale(0)`,opacity:0}],
+            {duration:1200,easing:"ease-out"});setTimeout(()=>spark.remove(),1250);
           }
         }
-        if(now-start < durationMs){ requestAnimationFrame(frame); }
-        else{ onDone(); }
+        if(now-start<durationMs){requestAnimationFrame(frame);}else{onDone();}
       }
       requestAnimationFrame(frame);
     }
 
-    /* ابدأ بحالة الصوت حسب isMuted (افتراضي مفعل) */
     applyMuteState();
   </script>
 </body>
