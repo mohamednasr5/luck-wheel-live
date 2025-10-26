@@ -3,40 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎡 دائرة الحظ | مهندس محمد</title>
+  <title>🎡 دائرة الحظ | المهندس محمد</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    body {
-      font-family: "Cairo", sans-serif;
-      height: 100vh;
+    html, body {
+      height: 100%;
+      width: 100%;
       overflow: hidden;
-      color: white;
+      background: linear-gradient(135deg, #FF1493, #FFD700, #00CED1, #FF69B4, #32CD32);
+      background-size: 400% 400%;
+      animation: bgMove 10s ease infinite;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      position: relative;
-      animation: gradientBG 10s ease infinite;
-      background: linear-gradient(135deg, #FF1493, #FFD700, #00CED1, #FF69B4, #32CD32);
-      background-size: 500% 500%;
+      font-family: "Cairo", sans-serif;
+      color: white;
     }
 
-    @keyframes gradientBG {
+    @keyframes bgMove {
       0% { background-position: 0% 50%; }
-      25% { background-position: 100% 50%; }
-      50% { background-position: 100% 100%; }
-      75% { background-position: 0% 100%; }
+      50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
 
     h1 {
-      font-size: 2.2rem;
+      font-size: clamp(1.5rem, 5vw, 2.2rem);
+      margin-bottom: 5px;
       background: linear-gradient(90deg, #FFD700, #FF1493, #32CD32);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 5px;
       text-align: center;
+      text-shadow: 0 0 10px rgba(255,255,255,0.4);
       animation: glowText 2s ease-in-out infinite;
     }
 
@@ -45,26 +44,46 @@
       50% { filter: drop-shadow(0 0 25px rgba(255,105,180,1)); }
     }
 
-    .subtitle { font-size: 1rem; margin-bottom: 10px; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+    .subtitle { font-size: 1rem; margin-bottom: 8px; opacity: 0.9; text-shadow: 0 0 5px #000; }
 
-    .info-section { display: flex; gap: 8px; justify-content: center; margin-bottom: 8px; flex-wrap: wrap; }
-    .info-box { background: rgba(255,255,255,0.15); border: 2px solid #FFD700; border-radius: 10px; padding: 8px 12px; font-weight: bold; font-size: 0.9rem; box-shadow: 0 0 10px rgba(255,215,0,0.3); }
-    .info-box .number { font-size: 1.1rem; color: #FFD700; }
+    .info-section {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
 
-    .countdown-container { display: none; font-size: 1rem; margin-top: 8px; padding: 8px 15px; background: rgba(255,215,0,0.2); border: 2px solid #FFD700; border-radius: 10px; color: #FFD700; font-weight: bold; }
-    .countdown-container.active { display: block; }
-    .countdown-time { font-size: 1.5rem; color: #FFD700; }
+    .info-box {
+      background: rgba(255,255,255,0.2);
+      border: 2px solid #FFD700;
+      border-radius: 10px;
+      padding: 6px 12px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      text-shadow: 0 0 5px #000;
+    }
 
-    .wheel-container { width: 90%; max-width: 380px; aspect-ratio: 1; margin: 15px auto; filter: drop-shadow(0 0 40px rgba(255,215,0,0.5)); }
+    .wheel-container {
+      width: 90%;
+      max-width: 380px;
+      aspect-ratio: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      filter: drop-shadow(0 0 30px rgba(255,215,0,0.4));
+    }
+
     #wheel {
       width: 100%;
       height: 100%;
       border-radius: 50%;
-      border: 12px solid #FFD700;
+      border: 10px solid #FFD700;
       background: conic-gradient(#FF1493, #FFD700, #00CED1, #FF69B4, #32CD32, #FF1493);
-      position: relative;
-      box-shadow: 0 0 60px rgba(255,215,0,0.6), inset 0 0 30px rgba(0,0,0,0.3);
       transition: transform 0s linear;
+      position: relative;
+      box-shadow: 0 0 50px rgba(255,215,0,0.5), inset 0 0 20px rgba(0,0,0,0.3);
     }
 
     .pointer {
@@ -73,10 +92,10 @@
       background: linear-gradient(90deg, #FFD700, #FFA500);
       clip-path: polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%);
       position: absolute;
-      top: -30px;
+      top: -25px;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 20;
+      z-index: 10;
     }
 
     .segment {
@@ -89,60 +108,32 @@
       transform-origin: 50% 50%;
       padding-top: 40px;
     }
+
     .segment span {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: bold;
-      color: #fff;
+      color: white;
       text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
       max-width: 70px;
       text-align: center;
     }
 
-    #winnerBox {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      padding: 25px;
-      background: linear-gradient(135deg, #FF69B4, #FFD700, #00CED1);
-      border-radius: 20px;
-      border: 4px solid #32CD32;
-      box-shadow: 0 0 100px rgba(255,215,0,0.8);
-      animation: showWinner 0.8s ease forwards;
-      text-align: center;
-      z-index: 9999;
-    }
-
-    @keyframes showWinner {
-      0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
-      80% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
-      100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-    }
-
-    #winnerName {
-      font-size: 2rem;
-      font-weight: 900;
-      color: #32CD32;
-      margin: 10px 0;
-      text-shadow: 0 0 20px #000;
-    }
-
     .players-btn {
+      margin-top: 15px;
       background: linear-gradient(135deg, #FF1493, #FFD700);
       border: 3px solid #32CD32;
       color: white;
-      padding: 12px 25px;
+      padding: 12px 22px;
       border-radius: 50px;
       font-weight: bold;
       cursor: pointer;
       font-size: 1rem;
       box-shadow: 0 0 20px rgba(255,215,0,0.6);
       animation: pulse 2s ease-in-out infinite;
-      margin-top: 20px;
     }
+
     @keyframes pulse {
-      0%, 100% { transform: scale(1); }
+      0%,100% { transform: scale(1); }
       50% { transform: scale(1.1); }
     }
 
@@ -152,28 +143,73 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: linear-gradient(135deg, #FF1493, #FFD700, #00CED1, #FF69B4);
+      background: linear-gradient(135deg, #FF69B4, #FFD700, #00CED1);
       border-radius: 20px;
       border: 4px solid #32CD32;
       padding: 25px;
-      max-width: 400px;
+      max-width: 380px;
       width: 90%;
-      max-height: 70vh;
-      overflow-y: auto;
-      box-shadow: 0 0 100px rgba(255,20,147,0.9);
-      animation: fadeIn 0.4s ease;
+      box-shadow: 0 0 80px rgba(255,20,147,0.9);
+      animation: fadeIn 0.3s ease;
       z-index: 1000;
     }
     .players-panel.show { display: block !important; }
-    .players-panel h2 { text-align: center; color: #32CD32; margin-bottom: 15px; }
-    .players-list-panel { list-style: none; padding: 0; }
+    .players-panel h2 { color: #32CD32; text-align: center; margin-bottom: 10px; }
     .player-item-panel {
       background: rgba(255,255,255,0.2);
-      padding: 10px;
-      margin: 6px 0;
+      padding: 8px;
+      margin: 5px 0;
       border-radius: 8px;
       border-left: 4px solid #32CD32;
       font-weight: bold;
+    }
+
+    #winnerBox {
+      display: none;
+      position: absolute;
+      top: 45%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(135deg, #FFD700, #FF69B4, #32CD32);
+      color: white;
+      padding: 25px;
+      border-radius: 20px;
+      border: 3px solid #fff;
+      box-shadow: 0 0 100px rgba(255,255,255,0.6);
+      text-align: center;
+      width: 90%;
+      max-width: 380px;
+      z-index: 1000;
+      animation: popUp 0.8s ease forwards;
+    }
+
+    @keyframes popUp {
+      0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+      80% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+
+    #winnerName {
+      font-size: 1.8rem;
+      font-weight: 900;
+      margin: 10px 0;
+      color: #fff;
+      text-shadow: 0 0 10px #000;
+    }
+
+    .firework {
+      position: fixed;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 2000;
+    }
+
+    @media (max-width: 600px) {
+      #wheel { border-width: 8px; }
+      .pointer { height: 30px; width: 15px; }
+      .players-btn { padding: 10px 18px; font-size: 0.9rem; }
     }
   </style>
 </head>
@@ -182,28 +218,23 @@
   <div class="subtitle">العرض المباشر بإشراف المهندس محمد</div>
 
   <div class="info-section">
-    <div class="info-box">👥 المشاهدين: <span class="number" id="viewersCount">0</span></div>
-    <div class="info-box">🎮 اللاعبين: <span class="number" id="playersCount">0</span></div>
-  </div>
-
-  <div class="countdown-container" id="countdownContainer">
-    توقف العجلة بعد: <span class="countdown-time" id="countdownTime">0</span>
+    <div class="info-box">👥 المشاهدين: <span id="viewersCount">0</span></div>
+    <div class="info-box">🎮 اللاعبين: <span id="playersCount">0</span></div>
   </div>
 
   <div class="wheel-container">
     <div id="wheel"><div class="pointer"></div></div>
+    <div id="winnerBox">
+      <div>🏆 الفائز المحظوظ 🏆</div>
+      <div id="winnerName"></div>
+      <div>🎉 مبروك الجائزة 🎊</div>
+    </div>
   </div>
 
   <button class="players-btn" id="playersBtn">👥 عرض اللاعبين</button>
   <div class="players-panel" id="playersPanel">
-    <h2>🎮 قائمة اللاعبين المشاركين</h2>
-    <ul class="players-list-panel" id="playersList"></ul>
-  </div>
-
-  <div id="winnerBox">
-    <div class="winner-text">🏆 الفائز المحظوظ 🏆</div>
-    <div id="winnerName"></div>
-    <div>🎉 مبروك الجائزة من مهندس محمد 🎉</div>
+    <h2>🎮 قائمة اللاعبين</h2>
+    <div id="playersList"></div>
   </div>
 
   <script type="module">
@@ -226,8 +257,6 @@
     const wheel = document.getElementById("wheel");
     const winnerBox = document.getElementById("winnerBox");
     const winnerName = document.getElementById("winnerName");
-    const countdownContainer = document.getElementById("countdownContainer");
-    const countdownTime = document.getElementById("countdownTime");
     const viewersCount = document.getElementById("viewersCount");
     const playersCount = document.getElementById("playersCount");
     const playersBtn = document.getElementById("playersBtn");
@@ -239,18 +268,15 @@
     let countdownInterval;
     const viewerId = "viewer_" + Math.random().toString(36).substr(2, 9);
 
-    // 🟢 حفظ المشاهدين
     const viewerRef = ref(db, `wheel/viewers/${viewerId}`);
     set(viewerRef, { timestamp: Date.now() });
     window.addEventListener("beforeunload", () => remove(viewerRef));
 
-    // 🟢 تحديث المشاهدين
     onValue(ref(db, "wheel/viewers"), (snap) => {
       const data = snap.val() || {};
       viewersCount.textContent = Object.keys(data).length;
     });
 
-    // 🟢 تحديث اللاعبين
     onValue(ref(db, "wheel/players"), (snap) => {
       const data = snap.val() || {};
       players = Object.values(data);
@@ -258,14 +284,12 @@
       drawWheel(players);
     });
 
-    // 🟢 عند الضغط على الزر لعرض اللاعبين
     playersBtn.addEventListener("click", () => {
       updatePlayersList();
       playersPanel.classList.add("show");
       setTimeout(() => playersPanel.classList.remove("show"), 5000);
     });
 
-    // 🟢 مزامنة دوران العجلة
     onValue(ref(db, "wheel/state"), (snap) => {
       const data = snap.val();
       if (data && !isSpinning) {
@@ -289,33 +313,58 @@
 
     function spinWheel(rotation, winner, duration) {
       winnerBox.style.display = "none";
-      countdownContainer.classList.add("active");
-      let remaining = duration;
-      countdownTime.textContent = remaining;
-      countdownInterval = setInterval(() => {
-        remaining--;
-        countdownTime.textContent = remaining;
-        if (remaining <= 0) clearInterval(countdownInterval);
-      }, 1000);
-
       wheel.style.transition = `transform ${duration}s cubic-bezier(0.33, 1, 0.68, 1)`;
       wheel.style.transform = `rotate(${rotation}deg)`;
-
       setTimeout(() => {
-        clearInterval(countdownInterval);
-        countdownContainer.classList.remove("active");
-        winnerBox.style.display = "block";
-        winnerName.textContent = winner;
+        showWinner(winner);
         isSpinning = false;
       }, duration * 1000);
     }
 
+    function showWinner(name) {
+      winnerBox.style.display = "block";
+      winnerName.textContent = name;
+      playFireworks();
+      playCheer();
+    }
+
+    function playFireworks() {
+      for (let i = 0; i < 25; i++) {
+        setTimeout(() => {
+          const x = Math.random() * window.innerWidth;
+          const y = Math.random() * (window.innerHeight / 2);
+          const color = ["#FFD700","#FF69B4","#00CED1","#32CD32"][Math.floor(Math.random()*4)];
+          for (let j = 0; j < 20; j++) {
+            const spark = document.createElement("div");
+            spark.className = "firework";
+            spark.style.left = `${x}px`;
+            spark.style.top = `${y}px`;
+            spark.style.background = color;
+            document.body.appendChild(spark);
+            const angle = (Math.PI * 2 * j) / 20;
+            const distance = 100 + Math.random() * 100;
+            spark.animate([
+              { transform: "translate(0,0) scale(1)", opacity: 1 },
+              { transform: `translate(${Math.cos(angle)*distance}px, ${Math.sin(angle)*distance}px) scale(0)`, opacity: 0 }
+            ], { duration: 1200, easing: "ease-out" });
+            setTimeout(() => spark.remove(), 1300);
+          }
+        }, i * 150);
+      }
+    }
+
+    function playCheer() {
+      const audio = new Audio("https://cdn.pixabay.com/download/audio/2023/03/10/audio_31e13b1882.mp3?filename=applause-cheering-14677.mp3");
+      audio.volume = 0.8;
+      audio.play();
+    }
+
     function updatePlayersList() {
       if (!players.length) {
-        playersList.innerHTML = '<li class="player-item-panel">🎮 لا يوجد لاعبين مشاركين حالياً</li>';
+        playersList.innerHTML = '<div class="player-item-panel">🎮 لا يوجد لاعبين حاليًا</div>';
         return;
       }
-      playersList.innerHTML = players.map((p, i) => `<li class="player-item-panel">🎯 ${i + 1}. ${p.name}</li>`).join('');
+      playersList.innerHTML = players.map((p, i) => `<div class="player-item-panel">🎯 ${i+1}. ${p.name}</div>`).join('');
     }
   </script>
 </body>
