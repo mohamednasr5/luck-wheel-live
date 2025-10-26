@@ -137,7 +137,7 @@
   <div class="topbar"><h1 class="title">🎡 عجلة الحظ</h1></div>
   <button id="soundToggle" class="sound-toggle" title="تشغيل/كتم الصوت"><span id="soundIcon">🔈</span></button>
   <div id="toast" class="toast"></div>
-  <div class="subtitle">العرض المباشر بإشراف المهندس محمد حماد</div>
+  <div class="subtitle">العرض المباشر بإشراف المهندس محمد</div>
 
   <div class="info-section">
     <div class="info-box">👥 المشاهدين: <span id="viewersCount">0</span></div>
@@ -242,7 +242,6 @@
         isActive = true;
         set(viewerRef, { active: true, timestamp: Date.now() });
       } else {
-        // التحديث الدوري للنشاط
         set(viewerRef, { active: true, timestamp: Date.now() });
       }
     };
@@ -250,7 +249,6 @@
     ["mousemove","mousedown","keydown","scroll","touchstart"].forEach(evt =>
       document.addEventListener(evt, updateActivity)
     );
-
     setInterval(() => {
       const diff = Date.now() - lastActiveTime;
       if (diff > inactivityLimit && isActive) {
@@ -259,7 +257,6 @@
       }
     }, 5000);
 
-    // وجود المستخدم وحذفه عند خروجه
     onValue(connectedRef,snap=>{
       if(snap.val()===true){
         set(viewerRef,{active:true,timestamp:Date.now()});
@@ -267,14 +264,12 @@
       }
     });
 
-    // عداد المشاهدين الفعليين
     onValue(ref(db,"wheel/viewers"),snap=>{
       const viewers=snap.val()||{};
       const activeCount=Object.values(viewers).filter(v=>v.active).length;
       viewersCountEl.textContent=activeCount;
     });
 
-    // كود اللاعبين الأصلي
     onValue(ref(db,"wheel/players"),snap=>{
       const data=snap.val()||{};players=Object.values(data);
       playersCountEl.textContent=players.length;drawWheel(players);
@@ -372,8 +367,12 @@
       requestAnimationFrame(frame);
     }
 
+    // ====== السطر الخاص بظهور الفائز الافتراضي أول الدخول =======
+    winnerBox.style.display = "block";
+    winnerNameEl.textContent = "Eng mohamed Hammad";
+    // ============================================================
+    
     applyMuteState();
   </script>
 </body>
 </html>
-
