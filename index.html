@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🎡 دائرة الحظ - مهندس محمد | العرض المباشر</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎡 دائرة الحظ - العرض المباشر</title>
   <style>
     * {
       margin: 0;
@@ -62,9 +62,10 @@
 
     .wheel-container {
       position: relative;
-      width: 500px;
-      height: 500px;
-      margin: 0 auto 60px;
+      width: 100%;
+      max-width: 500px;
+      aspect-ratio: 1;
+      margin: 0 auto 40px;
       filter: drop-shadow(0 0 40px rgba(255,215,0,0.4));
     }
 
@@ -140,6 +141,10 @@
       border-radius: 10px;
       color: #FFD700;
       font-weight: bold;
+      width: 100%;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .countdown-container.active {
@@ -165,13 +170,21 @@
       width: 100%;
       margin-left: auto;
       margin-right: auto;
-      box-sizing: border-box;
+      max-width: 500px;
     }
 
     @keyframes celebrateAppear {
-      0% { transform: scale(0); opacity: 0; }
-      70% { transform: scale(1.1); }
-      100% { transform: scale(1); opacity: 1; }
+      0% {
+        transform: scale(0);
+        opacity: 0;
+      }
+      70% {
+        transform: scale(1.1);
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
     }
 
     .winner-text {
@@ -187,6 +200,7 @@
       display: block;
       margin: 20px 0;
       animation: winnerPop 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      word-wrap: break-word;
     }
 
     @keyframes winnerPop {
@@ -220,23 +234,108 @@
     }
 
     @media (max-width: 768px) {
-      h1 { font-size: 2.5rem; }
-      .wheel-container { width: 350px; height: 350px; }
-      #wheel { border-width: 8px; }
-      .segment span { font-size: 14px; }
-      #winnerName { font-size: 2.5rem; }
-      .winner-text { font-size: 1.5rem; }
-      .winner-details { font-size: 1.2rem; }
+      h1 {
+        font-size: 2.5rem;
+      }
+
+      .subtitle {
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+      }
+      
+      .wheel-container {
+        max-width: 350px;
+        margin: 0 auto 30px;
+      }
+
+      #wheel {
+        border-width: 8px;
+      }
+
+      .segment span {
+        font-size: 14px;
+        padding-top: 10px;
+      }
+
+      #winnerName {
+        font-size: 2.5rem;
+      }
+
+      .winner-text {
+        font-size: 1.5rem;
+      }
+
+      .winner-details {
+        font-size: 1.2rem;
+      }
+
+      .countdown-container {
+        font-size: 1rem;
+        padding: 10px 20px;
+        margin-bottom: 15px;
+      }
+
+      .countdown-time {
+        font-size: 2rem;
+      }
+
+      #winnerBox {
+        padding: 20px;
+        margin-top: 20px;
+      }
     }
 
     @media (max-width: 480px) {
-      h1 { font-size: 2rem; }
-      .subtitle { font-size: 1rem; margin-bottom: 20px; }
-      .wheel-container { width: 100%; max-width: 280px; margin: 0 auto 30px; }
-      .segment span { font-size: 12px; }
-      #winnerName { font-size: 2rem; }
-      .winner-text { font-size: 1.3rem; }
-      #winnerBox { padding: 20px; margin-top: 20px; }
+      h1 {
+        font-size: 2rem;
+      }
+
+      .subtitle {
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+        letter-spacing: 1px;
+      }
+
+      .wheel-container {
+        max-width: 280px;
+        margin: 0 auto 25px;
+      }
+
+      .segment span {
+        font-size: 12px;
+      }
+
+      #winnerName {
+        font-size: 1.8rem;
+      }
+
+      .winner-text {
+        font-size: 1.2rem;
+      }
+
+      .winner-details {
+        font-size: 1rem;
+      }
+
+      .countdown-container {
+        font-size: 0.9rem;
+        padding: 8px 15px;
+        margin-bottom: 10px;
+      }
+
+      .countdown-time {
+        font-size: 1.5rem;
+      }
+
+      #winnerBox {
+        padding: 15px;
+        margin-top: 15px;
+      }
+
+      .status {
+        font-size: 1rem;
+        margin-bottom: 15px;
+      }
     }
   </style>
 </head>
@@ -310,9 +409,11 @@
 
     function drawWheel(players) {
       if (players.length === 0) return;
+      
       const count = players.length;
       const angle = 360 / count;
       wheel.innerHTML = '<div class="pointer"></div>';
+      
       players.forEach((p, i) => {
         const seg = document.createElement("div");
         seg.classList.add("segment");
@@ -334,7 +435,9 @@
       countdownInterval = setInterval(() => {
         remaining--;
         countdownTime.textContent = remaining;
-        if (remaining <= 0) clearInterval(countdownInterval);
+        if (remaining <= 0) {
+          clearInterval(countdownInterval);
+        }
       }, 1000);
 
       wheel.style.transition = `transform ${duration}s cubic-bezier(0.33, 1, 0.68, 1)`;
@@ -383,12 +486,16 @@
       const audioContext = new (window.AudioContext || window.webkitAudioContext)();
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
+      
       oscillator.connect(gainNode);
       gainNode.connect(audioContext.destination);
+      
       oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
       oscillator.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.1);
+      
       gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
       gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+      
       oscillator.start(audioContext.currentTime);
       oscillator.stop(audioContext.currentTime + 0.5);
     }
