@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎡 دائرة الحظ - مهندس محمد حماد | العرض المباشر</title>
+  <title>🎡 دائرة الحظ - مهندس محمد | العرض المباشر</title>
   <style>
     * {
       margin: 0;
@@ -125,6 +125,29 @@
       50% { opacity: 0.6; }
     }
 
+    .countdown-container {
+      display: none;
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+      padding: 15px 30px;
+      background: rgba(255,215,0,0.2);
+      border: 2px solid #FFD700;
+      border-radius: 10px;
+      color: #FFD700;
+      font-weight: bold;
+    }
+
+    .countdown-container.active {
+      display: block;
+    }
+
+    .countdown-time {
+      font-size: 2.5rem;
+      color: #FFD700;
+      font-weight: 900;
+      text-shadow: 0 0 10px rgba(255,215,0,0.8);
+    }
+
     #winnerBox {
       display: none;
       margin-top: 40px;
@@ -226,6 +249,10 @@
     
     <div class="status" id="status"></div>
     
+    <div class="countdown-container" id="countdownContainer">
+      توقف العجلة بعد: <div class="countdown-time" id="countdownTime">0</div>
+    </div>
+    
     <div class="wheel-container">
       <div id="wheel">
         <div class="pointer"></div>
@@ -262,9 +289,12 @@
     const winnerBox = document.getElementById("winnerBox");
     const winnerName = document.getElementById("winnerName");
     const status = document.getElementById("status");
+    const countdownContainer = document.getElementById("countdownContainer");
+    const countdownTime = document.getElementById("countdownTime");
 
     let players = [];
     let isSpinning = false;
+    let countdownInterval;
 
     onValue(ref(db, "wheel/players"), (snapshot) => {
       const data = snapshot.val() || {};
@@ -301,10 +331,25 @@
       status.textContent = "🎬 جاري الدوران...";
       status.classList.add("spinning");
 
+      // بدء العداد المتناقص
+      countdownContainer.classList.add("active");
+      let remaining = duration;
+      countdownTime.textContent = remaining;
+
+      countdownInterval = setInterval(() => {
+        remaining--;
+        countdownTime.textContent = remaining;
+        if (remaining <= 0) {
+          clearInterval(countdownInterval);
+        }
+      }, 1000);
+
       wheel.style.transition = `transform ${duration}s cubic-bezier(0.33, 1, 0.68, 1)`;
       wheel.style.transform = `rotate(${rotation}deg)`;
 
       setTimeout(() => {
+        clearInterval(countdownInterval);
+        countdownContainer.classList.remove("active");
         status.textContent = "🎉 تم اختيار الفائز!";
         status.classList.remove("spinning");
         winnerBox.style.display = "block";
