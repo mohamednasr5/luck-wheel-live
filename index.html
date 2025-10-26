@@ -6,213 +6,126 @@
   <title>🎡 دائرة الحظ | المهندس محمد</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     html, body {
-      height: 100%;
-      width: 100%;
+      height: 100%; width: 100%;
       overflow: hidden;
       background: linear-gradient(135deg, #FF1493, #FFD700, #00CED1, #FF69B4, #32CD32);
       background-size: 400% 400%;
       animation: bgMove 10s ease infinite;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-family: "Cairo", sans-serif;
-      color: white;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      font-family: "Cairo", sans-serif; color: white;
     }
-
     @keyframes bgMove {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
-
     h1 {
       font-size: clamp(1.5rem, 5vw, 2.2rem);
       margin-bottom: 5px;
       background: linear-gradient(90deg, #FFD700, #FF1493, #32CD32);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-align: center;
-      text-shadow: 0 0 10px rgba(255,255,255,0.4);
       animation: glowText 2s ease-in-out infinite;
+      text-shadow: 0 0 10px rgba(255,255,255,0.4);
+      text-align: center;
     }
-
     @keyframes glowText {
       0%,100% { filter: drop-shadow(0 0 10px rgba(255,215,0,0.7)); }
       50% { filter: drop-shadow(0 0 25px rgba(255,105,180,1)); }
     }
-
     .subtitle { font-size: 1rem; margin-bottom: 8px; opacity: 0.9; text-shadow: 0 0 5px #000; }
 
     .info-section {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
+      display: flex; gap: 10px; justify-content: center;
+      margin-bottom: 10px; flex-wrap: wrap;
     }
-
     .info-box {
       background: rgba(255,255,255,0.2);
-      border: 2px solid #FFD700;
-      border-radius: 10px;
-      padding: 6px 12px;
-      font-weight: bold;
-      font-size: 0.9rem;
+      border: 2px solid #FFD700; border-radius: 10px;
+      padding: 6px 12px; font-weight: bold; font-size: 0.9rem;
       text-shadow: 0 0 5px #000;
     }
 
+    .countdown-container {
+      display: none;
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      background: rgba(255,215,0,0.15);
+      border: 2px solid #FFD700;
+      border-radius: 12px;
+      padding: 8px 18px;
+      color: #FFD700;
+      font-weight: bold;
+      text-shadow: 0 0 5px #000;
+      animation: glow 1s infinite alternate;
+    }
+    @keyframes glow {
+      0% { box-shadow: 0 0 10px #FFD700; }
+      100% { box-shadow: 0 0 25px #FF69B4; }
+    }
+
     .wheel-container {
-      width: 90%;
-      max-width: 380px;
-      aspect-ratio: 1;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 90%; max-width: 380px;
+      aspect-ratio: 1; position: relative;
+      display: flex; align-items: center; justify-content: center;
       filter: drop-shadow(0 0 30px rgba(255,215,0,0.4));
     }
-
     #wheel {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      border: 10px solid #FFD700;
+      width: 100%; height: 100%;
+      border-radius: 50%; border: 10px solid #FFD700;
       background: conic-gradient(#FF1493, #FFD700, #00CED1, #FF69B4, #32CD32, #FF1493);
+      box-shadow: 0 0 50px rgba(255,215,0,0.5), inset 0 0 20px rgba(0,0,0,0.3);
       transition: transform 0s linear;
       position: relative;
-      box-shadow: 0 0 50px rgba(255,215,0,0.5), inset 0 0 20px rgba(0,0,0,0.3);
     }
-
     .pointer {
-      width: 20px;
-      height: 40px;
+      width: 20px; height: 40px;
       background: linear-gradient(90deg, #FFD700, #FFA500);
       clip-path: polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%);
-      position: absolute;
-      top: -25px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 10;
+      position: absolute; top: -25px; left: 50%;
+      transform: translateX(-50%); z-index: 10;
     }
 
-    .segment {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      transform-origin: 50% 50%;
-      padding-top: 40px;
+    #winnerBox {
+      display: none;
+      position: absolute; top: 45%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(135deg, #FFD700, #FF69B4, #32CD32);
+      color: white; padding: 25px; border-radius: 20px;
+      border: 3px solid #fff; text-align: center;
+      box-shadow: 0 0 100px rgba(255,255,255,0.6);
+      width: 90%; max-width: 380px; z-index: 1000;
+    }
+    #winnerName {
+      font-size: 2rem; font-weight: 900;
+      margin: 10px 0; color: #fff; text-shadow: 0 0 10px #000;
+      animation: winnerPulse 1.2s infinite alternate;
+    }
+    @keyframes winnerPulse {
+      0% { transform: scale(1); text-shadow: 0 0 10px #FFD700; }
+      100% { transform: scale(1.05); text-shadow: 0 0 30px #FF69B4; }
     }
 
-    .segment span {
-      font-size: 13px;
-      font-weight: bold;
-      color: white;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-      max-width: 70px;
-      text-align: center;
+    .firework {
+      position: fixed; width: 6px; height: 6px;
+      border-radius: 50%; pointer-events: none; z-index: 2000;
     }
 
     .players-btn {
       margin-top: 15px;
       background: linear-gradient(135deg, #FF1493, #FFD700);
       border: 3px solid #32CD32;
-      color: white;
-      padding: 12px 22px;
-      border-radius: 50px;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 1rem;
+      color: white; padding: 12px 22px;
+      border-radius: 50px; font-weight: bold;
+      cursor: pointer; font-size: 1rem;
       box-shadow: 0 0 20px rgba(255,215,0,0.6);
       animation: pulse 2s ease-in-out infinite;
     }
-
     @keyframes pulse {
       0%,100% { transform: scale(1); }
       50% { transform: scale(1.1); }
-    }
-
-    .players-panel {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: linear-gradient(135deg, #FF69B4, #FFD700, #00CED1);
-      border-radius: 20px;
-      border: 4px solid #32CD32;
-      padding: 25px;
-      max-width: 380px;
-      width: 90%;
-      max-height: 70vh;
-      box-shadow: 0 0 80px rgba(255,20,147,0.9);
-      animation: fadeIn 0.3s ease;
-      z-index: 1000;
-      overflow-y: auto;
-    }
-
-    .players-panel.show { display: block !important; }
-    .players-panel h2 { color: #32CD32; text-align: center; margin-bottom: 10px; }
-    .player-item-panel {
-      background: rgba(255,255,255,0.2);
-      padding: 8px;
-      margin: 5px 0;
-      border-radius: 8px;
-      border-left: 4px solid #32CD32;
-      font-weight: bold;
-    }
-
-    .players-panel::-webkit-scrollbar { width: 8px; }
-    .players-panel::-webkit-scrollbar-thumb {
-      background: linear-gradient(180deg, #FFD700, #FF69B4);
-      border-radius: 10px;
-    }
-
-    #winnerBox {
-      display: none;
-      position: absolute;
-      top: 45%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: linear-gradient(135deg, #FFD700, #FF69B4, #32CD32);
-      color: white;
-      padding: 25px;
-      border-radius: 20px;
-      border: 3px solid #fff;
-      box-shadow: 0 0 100px rgba(255,255,255,0.6);
-      text-align: center;
-      width: 90%;
-      max-width: 380px;
-      z-index: 1000;
-      animation: popUp 0.8s ease forwards;
-    }
-
-    @keyframes popUp {
-      0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
-      80% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
-      100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-    }
-
-    #winnerName {
-      font-size: 1.8rem;
-      font-weight: 900;
-      margin: 10px 0;
-      color: #fff;
-      text-shadow: 0 0 10px #000;
-    }
-
-    .firework {
-      position: fixed;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 2000;
     }
 
     @media (max-width: 600px) {
@@ -232,6 +145,10 @@
     <div class="info-box">🎮 اللاعبين: <span id="playersCount">0</span></div>
   </div>
 
+  <div class="countdown-container" id="countdownContainer">
+    ⏳ توقف العجلة بعد <span id="countdownTime">0</span> ثانية
+  </div>
+
   <div class="wheel-container">
     <div id="wheel"><div class="pointer"></div></div>
     <div id="winnerBox">
@@ -242,10 +159,6 @@
   </div>
 
   <button class="players-btn" id="playersBtn">👥 عرض اللاعبين</button>
-  <div class="players-panel" id="playersPanel">
-    <h2>🎮 قائمة اللاعبين</h2>
-    <div id="playersList"></div>
-  </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -269,22 +182,19 @@
     const winnerName = document.getElementById("winnerName");
     const viewersCount = document.getElementById("viewersCount");
     const playersCount = document.getElementById("playersCount");
-    const playersBtn = document.getElementById("playersBtn");
-    const playersPanel = document.getElementById("playersPanel");
-    const playersList = document.getElementById("playersList");
+    const countdownContainer = document.getElementById("countdownContainer");
+    const countdownTime = document.getElementById("countdownTime");
 
     let players = [];
     let isSpinning = false;
+    let countdownInterval;
 
-    // 🟢 إنشاء معرّف عشوائي لكل زائر
+    // 🟢 المشاهدين (Realtime)
     const viewerId = "viewer_" + Math.random().toString(36).substr(2, 9);
     const viewerRef = ref(db, `wheel/viewers/${viewerId}`);
     set(viewerRef, { timestamp: Date.now() });
-
-    // 🟢 حذف الزائر فور خروجه من الصفحة
     onDisconnect(viewerRef).remove();
 
-    // 🟢 عدّاد المشاهدين الحيّ
     onValue(ref(db, "wheel/viewers"), (snap) => {
       const data = snap.val() || {};
       viewersCount.textContent = Object.keys(data).length;
@@ -298,14 +208,7 @@
       drawWheel(players);
     });
 
-    // 🟢 عرض اللاعبين
-    playersBtn.addEventListener("click", () => {
-      updatePlayersList();
-      playersPanel.classList.add("show");
-      setTimeout(() => playersPanel.classList.remove("show"), 5000);
-    });
-
-    // 🟢 عند حدوث دوران
+    // 🟢 دوران العجلة
     onValue(ref(db, "wheel/state"), (snap) => {
       const data = snap.val();
       if (data && !isSpinning) {
@@ -329,9 +232,20 @@
 
     function spinWheel(rotation, winner, duration) {
       winnerBox.style.display = "none";
+      countdownContainer.style.display = "block";
+      let remaining = duration;
+      countdownTime.textContent = remaining;
+      countdownInterval = setInterval(() => {
+        remaining--;
+        countdownTime.textContent = remaining;
+        if (remaining <= 0) clearInterval(countdownInterval);
+      }, 1000);
+
       wheel.style.transition = `transform ${duration}s cubic-bezier(0.33, 1, 0.68, 1)`;
       wheel.style.transform = `rotate(${rotation}deg)`;
+
       setTimeout(() => {
+        countdownContainer.style.display = "none";
         showWinner(winner);
         isSpinning = false;
       }, duration * 1000);
@@ -342,8 +256,10 @@
       winnerName.textContent = name;
       playFireworks();
       playCheer();
+      playCelebration();
     }
 
+    // 🎆 ألعاب نارية متدرجة
     function playFireworks() {
       for (let i = 0; i < 25; i++) {
         setTimeout(() => {
@@ -358,7 +274,7 @@
             spark.style.background = color;
             document.body.appendChild(spark);
             const angle = (Math.PI * 2 * j) / 20;
-            const distance = 100 + Math.random() * 100;
+            const distance = 120 + Math.random() * 150;
             spark.animate([
               { transform: "translate(0,0) scale(1)", opacity: 1 },
               { transform: `translate(${Math.cos(angle)*distance}px, ${Math.sin(angle)*distance}px) scale(0)`, opacity: 0 }
@@ -369,18 +285,18 @@
       }
     }
 
+    // 🔊 صوت التصفيق
     function playCheer() {
       const audio = new Audio("https://cdn.pixabay.com/download/audio/2023/03/10/audio_31e13b1882.mp3?filename=applause-cheering-14677.mp3");
       audio.volume = 0.8;
       audio.play();
     }
 
-    function updatePlayersList() {
-      if (!players.length) {
-        playersList.innerHTML = '<div class="player-item-panel">🎮 لا يوجد لاعبين حاليًا</div>';
-        return;
-      }
-      playersList.innerHTML = players.map((p, i) => `<div class="player-item-panel">🎯 ${i+1}. ${p.name}</div>`).join('');
+    // 🔊 صوت احتفال إضافي (موسيقى خلفية سريعة)
+    function playCelebration() {
+      const music = new Audio("https://cdn.pixabay.com/download/audio/2022/10/18/audio_5cbf36b08c.mp3?filename=party-horn-and-crowd-11245.mp3");
+      music.volume = 0.7;
+      music.play();
     }
   </script>
 </body>
