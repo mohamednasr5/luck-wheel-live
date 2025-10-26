@@ -472,9 +472,9 @@
     // تحديث حالة الدوران
     onValue(ref(db, "wheel/state"), (snapshot) => {
       const data = snapshot.val();
-      if (data && isSpinning === false) {
+      if (data && !isSpinning) {
         isSpinning = true;
-        spinWheel(data.rotation, data.duration);
+        spinWheelAdmin(data.rotation, data.duration, data.winner);
         setTimeout(() => { isSpinning = false; }, data.duration * 1000 + 500);
       }
     });
@@ -528,10 +528,6 @@
         duration: spinDuration,
         timestamp: Date.now()
       });
-
-      setTimeout(() => {
-        spinBtn.disabled = false;
-      }, spinDuration * 1000 + 1000);
     };
 
     function drawWheel(players) {
@@ -553,9 +549,10 @@
       });
     }
 
-    function spinWheel(rotation, duration) {
+    function spinWheelAdmin(rotation, duration) {
       wheel.style.transition = `transform ${duration}s cubic-bezier(0.33, 1, 0.68, 1)`;
       wheel.style.transform = `rotate(${rotation}deg)`;
+      spinWheelAdmin(rotation, spinDuration);
     }
 
     function updatePlayersList() {
