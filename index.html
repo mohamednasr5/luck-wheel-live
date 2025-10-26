@@ -110,9 +110,23 @@
     }
     .players-panel.show{display:block!important}
     .players-panel h2{color:#32CD32;text-align:center;margin-bottom:10px}
-    /* زر الإغلاق */
+    /* زر × ثابت أعلى القائمة حتى أثناء السكرول */
     .close-btn{
-      position:absolute;left:10px;top:10px;font-size:1.6rem;color:#32CD32;background:none;border:none;cursor:pointer;font-weight:bold;z-index:1101
+      position: sticky;
+      top: 0;
+      left: 0;
+      right: 0;
+      font-size: 1.8rem;
+      color: #32CD32;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      z-index: 2001;
+      width: 100%;
+      text-align: left;
+      padding: 7px 0 10px 0;
+      background: linear-gradient(90deg,rgba(255,255,255,0.08),rgba(255,215,0,0.22));
     }
     .player-item-panel{background:rgba(255,255,255,.2);padding:8px;margin:5px 0;border-radius:8px;border-left:4px solid #32CD32;font-weight:bold}
     .players-panel::-webkit-scrollbar{width:8px}
@@ -188,7 +202,7 @@
     let countdownInterval = null;
     let tickInterval = null;
     let isMuted = false;
-    let stateShown = false; // متغير لمنع دوران العجلة أو تغير الفائز إلا بعد الضغط
+    let stateShown = false;
     const drumRoll = new Audio("https://raw.githubusercontent.com/mohamednasr5/luck-wheel-live/main/drum-roll-sound-effect-.mp3");
     const woodenTickSrc = "https://raw.githubusercontent.com/mohamednasr5/luck-wheel-live/main/clock-ticking-down-.mp3";
     const applause = new Audio("https://raw.githubusercontent.com/mohamednasr5/luck-wheel-live/main/applause-.mp3");
@@ -216,7 +230,7 @@
     const connectedRef=ref(db,'.info/connected');
     // كود النشاط
     let lastActiveTime = Date.now();
-    const inactivityLimit = 120000; // 120 ثانية بدون تفاعل يعتبر غير نشط
+    const inactivityLimit = 60000;
     let isActive = true;
     const updateActivity = () => {
       lastActiveTime = Date.now();
@@ -277,7 +291,6 @@
         span.textContent=players[i].name;seg.appendChild(span);wheel.appendChild(seg);
       }
     }
-    // منع دوران العجلة أو تغيير الفائز إلا بعد أول تغيير للـstate (أي بعد أول دورة)
     onValue(ref(db,"wheel/state"),snap=>{
       const data=snap.val();
       if(!stateShown && data && typeof data.rotation !== "undefined" && typeof data.winner !== "undefined" && typeof data.duration !== "undefined"){
@@ -343,7 +356,6 @@
       }
       requestAnimationFrame(frame);
     }
-    // الفائز الافتراضي دائما عند دخول الصفحة أو التحديث
     winnerBox.style.display = "block";
     winnerNameEl.textContent = "Eng mohamed Hammad";
     applyMuteState();
