@@ -3,57 +3,59 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎡 دائرة الحظ</title>
+  <title>🎡 دائرة الحظ | مهندس محمد</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
       font-family: "Cairo", sans-serif;
-      background: linear-gradient(135deg, #FF1493 0%, #FFD700 25%, #00CED1 50%, #FF69B4 75%, #32CD32 100%);
-      background-size: 400% 400%;
-      animation: gradientShift 8s ease infinite;
-      width: 100%;
       height: 100vh;
       overflow: hidden;
-      position: fixed;
-      top: 0;
-      left: 0;
       color: white;
-    }
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    .container {
-      width: 100%;
-      height: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 10px;
-      overflow-y: auto;
+      justify-content: center;
+      position: relative;
+      animation: gradientBG 10s ease infinite;
+      background: linear-gradient(135deg, #FF1493, #FFD700, #00CED1, #FF69B4, #32CD32);
+      background-size: 500% 500%;
     }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      25% { background-position: 100% 50%; }
+      50% { background-position: 100% 100%; }
+      75% { background-position: 0% 100%; }
+      100% { background-position: 0% 50%; }
+    }
+
     h1 {
-      font-size: 2rem;
-      margin: 8px 0 3px;
-      background: linear-gradient(90deg, #FF1493, #FFD700, #00CED1, #FF69B4, #32CD32);
+      font-size: 2.2rem;
+      background: linear-gradient(90deg, #FFD700, #FF1493, #32CD32);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      animation: glow 2s ease-in-out infinite;
+      margin-bottom: 5px;
+      text-align: center;
+      animation: glowText 2s ease-in-out infinite;
     }
-    @keyframes glow {
-      0%, 100% { filter: drop-shadow(0 0 10px rgba(255,215,0,0.5)); }
-      50% { filter: drop-shadow(0 0 25px rgba(255,215,0,0.8)); }
+
+    @keyframes glowText {
+      0%,100% { filter: drop-shadow(0 0 10px rgba(255,215,0,0.7)); }
+      50% { filter: drop-shadow(0 0 25px rgba(255,105,180,1)); }
     }
-    .subtitle { font-size: 0.9rem; margin-bottom: 8px; }
+
+    .subtitle { font-size: 1rem; margin-bottom: 10px; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+
     .info-section { display: flex; gap: 8px; justify-content: center; margin-bottom: 8px; flex-wrap: wrap; }
-    .info-box { background: rgba(255,255,255,0.2); border: 2px solid #FFD700; border-radius: 8px; padding: 8px 12px; font-weight: bold; font-size: 0.8rem; }
-    .info-box .number { font-size: 1.1rem; color: #FFD700; font-weight: 900; }
-    .status { font-size: 0.9rem; margin-bottom: 4px; height: 20px; }
-    .countdown-container { display: none; font-size: 0.85rem; margin-bottom: 6px; padding: 8px 15px; background: rgba(255,215,0,0.2); border: 2px solid #FFD700; border-radius: 8px; color: #FFD700; font-weight: bold; }
+    .info-box { background: rgba(255,255,255,0.15); border: 2px solid #FFD700; border-radius: 10px; padding: 8px 12px; font-weight: bold; font-size: 0.9rem; box-shadow: 0 0 10px rgba(255,215,0,0.3); }
+    .info-box .number { font-size: 1.1rem; color: #FFD700; }
+
+    .countdown-container { display: none; font-size: 1rem; margin-top: 8px; padding: 8px 15px; background: rgba(255,215,0,0.2); border: 2px solid #FFD700; border-radius: 10px; color: #FFD700; font-weight: bold; }
     .countdown-container.active { display: block; }
-    .countdown-time { font-size: 1.5rem; color: #FFD700; font-weight: 900; }
-    .wheel-container { width: 90%; max-width: 380px; aspect-ratio: 1; margin: 8px auto; filter: drop-shadow(0 0 40px rgba(255,215,0,0.4)); }
+    .countdown-time { font-size: 1.5rem; color: #FFD700; }
+
+    .wheel-container { width: 90%; max-width: 380px; aspect-ratio: 1; margin: 15px auto; filter: drop-shadow(0 0 40px rgba(255,215,0,0.5)); }
     #wheel {
       width: 100%;
       height: 100%;
@@ -64,6 +66,7 @@
       box-shadow: 0 0 60px rgba(255,215,0,0.6), inset 0 0 30px rgba(0,0,0,0.3);
       transition: transform 0s linear;
     }
+
     .pointer {
       width: 20px;
       height: 40px;
@@ -75,6 +78,7 @@
       transform: translateX(-50%);
       z-index: 20;
     }
+
     .segment {
       position: absolute;
       width: 100%;
@@ -93,85 +97,55 @@
       max-width: 70px;
       text-align: center;
     }
+
     #winnerBox {
       display: none;
       position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%) scale(0);
-      padding: 30px;
-      background: linear-gradient(135deg, #FF1493, #FFD700, #00CED1, #FF69B4);
-      background-size: 400% 400%;
-      animation: celebrateAppear 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+      padding: 25px;
+      background: linear-gradient(135deg, #FF69B4, #FFD700, #00CED1);
       border-radius: 20px;
       border: 4px solid #32CD32;
-      box-shadow: 0 0 80px rgba(255,20,147,0.9);
-      width: 90%;
-      max-width: 500px;
-      z-index: 1000;
+      box-shadow: 0 0 100px rgba(255,215,0,0.8);
+      animation: showWinner 0.8s ease forwards;
       text-align: center;
-    }
-    @keyframes celebrateAppear {
-      0% { transform: translate(-50%, -50%) scale(0) rotateZ(-180deg); opacity: 0; }
-      70% { transform: translate(-50%, -50%) scale(1.15) rotateZ(10deg); opacity: 1; }
-      100% { transform: translate(-50%, -50%) scale(1) rotateZ(0deg); opacity: 1; }
-    }
-    .winner-text { font-size: 1.5rem; margin-bottom: 8px; }
-    #winnerName {
-      font-size: 2.2rem;
-      font-weight: 900;
-      color: #32CD32;
-      text-shadow: 3px 3px 6px rgba(0,0,0,0.5), 0 0 20px rgba(50,205,50,0.8);
-      margin: 12px 0;
-      animation: winnerPop 0.8s ease;
-    }
-    @keyframes winnerPop {
-      0% { transform: scale(0); }
-      100% { transform: scale(1); }
-    }
-    .winner-details {
-      font-size: 1rem;
-      margin-top: 8px;
-      color: #fff;
-      font-weight: 900;
-      letter-spacing: 2px;
-    }
-    .confetti {
-      position: fixed;
-      width: 10px;
-      height: 10px;
-      background: #FFD700;
-      pointer-events: none;
-    }
-    .medal { font-size: 1.8rem; animation: rotate 2s linear infinite; }
-    @keyframes rotate {
-      from { transform: rotateZ(0deg); }
-      to { transform: rotateZ(360deg); }
+      z-index: 9999;
     }
 
-    /* زر اللاعبين */
+    @keyframes showWinner {
+      0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+      80% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+
+    #winnerName {
+      font-size: 2rem;
+      font-weight: 900;
+      color: #32CD32;
+      margin: 10px 0;
+      text-shadow: 0 0 20px #000;
+    }
+
     .players-btn {
-      position: fixed;
-      left: 15px;
-      top: 15px;
-      z-index: 500;
       background: linear-gradient(135deg, #FF1493, #FFD700);
       border: 3px solid #32CD32;
       color: white;
-      padding: 12px 18px;
+      padding: 12px 25px;
       border-radius: 50px;
       font-weight: bold;
       cursor: pointer;
       font-size: 1rem;
       box-shadow: 0 0 20px rgba(255,215,0,0.6);
-      animation: pulse-btn 2s ease-in-out infinite;
+      animation: pulse 2s ease-in-out infinite;
+      margin-top: 20px;
     }
-    @keyframes pulse-btn {
+    @keyframes pulse {
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.1); }
     }
 
-    /* لوحة اللاعبين */
     .players-panel {
       display: none;
       position: fixed;
@@ -181,69 +155,55 @@
       background: linear-gradient(135deg, #FF1493, #FFD700, #00CED1, #FF69B4);
       border-radius: 20px;
       border: 4px solid #32CD32;
-      padding: 30px;
+      padding: 25px;
       max-width: 400px;
       width: 90%;
       max-height: 70vh;
       overflow-y: auto;
-      z-index: 2000;
       box-shadow: 0 0 100px rgba(255,20,147,0.9);
-      animation: fadeIn 0.3s ease;
+      animation: fadeIn 0.4s ease;
+      z-index: 1000;
     }
     .players-panel.show { display: block !important; }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translate(-50%, -60%); }
-      to { opacity: 1; transform: translate(-50%, -50%); }
-    }
-    .players-panel h2 {
-      font-size: 1.5rem;
-      margin-bottom: 20px;
-      color: #32CD32;
-      text-shadow: 0 0 10px rgba(50,205,50,0.8);
-      text-align: center;
-    }
-    .players-list-panel { list-style: none; }
+    .players-panel h2 { text-align: center; color: #32CD32; margin-bottom: 15px; }
+    .players-list-panel { list-style: none; padding: 0; }
     .player-item-panel {
       background: rgba(255,255,255,0.2);
-      padding: 12px;
-      margin: 8px 0;
+      padding: 10px;
+      margin: 6px 0;
       border-radius: 8px;
       border-left: 4px solid #32CD32;
       font-weight: bold;
-      font-size: 1rem;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🎡 دائرة الحظ</h1>
-    <div class="subtitle">العرض المباشر</div>
+  <h1>🎡 دائرة الحظ</h1>
+  <div class="subtitle">العرض المباشر بإشراف المهندس محمد</div>
 
-    <button class="players-btn" id="playersBtn">👥 اللاعبين</button>
-    <div class="players-panel" id="playersPanel">
-      <h2>🎮 قائمة اللاعبين المشاركين</h2>
-      <ul class="players-list-panel" id="playersList"></ul>
-    </div>
+  <div class="info-section">
+    <div class="info-box">👥 المشاهدين: <span class="number" id="viewersCount">0</span></div>
+    <div class="info-box">🎮 اللاعبين: <span class="number" id="playersCount">0</span></div>
+  </div>
 
-    <div class="status" id="status"></div>
-    <div class="info-section">
-      <div class="info-box">👥 المشاهدين: <span class="number" id="viewersCount">0</span></div>
-      <div class="info-box">🎮 اللاعبين: <span class="number" id="playersCount">0</span></div>
-    </div>
+  <div class="countdown-container" id="countdownContainer">
+    توقف العجلة بعد: <span class="countdown-time" id="countdownTime">0</span>
+  </div>
 
-    <div class="countdown-container" id="countdownContainer">
-      توقف العجلة بعد: <div class="countdown-time" id="countdownTime">0</div>
-    </div>
+  <div class="wheel-container">
+    <div id="wheel"><div class="pointer"></div></div>
+  </div>
 
-    <div class="wheel-container">
-      <div id="wheel"><div class="pointer"></div></div>
-    </div>
+  <button class="players-btn" id="playersBtn">👥 عرض اللاعبين</button>
+  <div class="players-panel" id="playersPanel">
+    <h2>🎮 قائمة اللاعبين المشاركين</h2>
+    <ul class="players-list-panel" id="playersList"></ul>
+  </div>
 
-    <div id="winnerBox">
-      <div class="winner-text"><span class="medal">🏆</span> الفائز الحظيظ <span class="medal">🏆</span></div>
-      <span id="winnerName"></span>
-      <div class="winner-details">مبروووووووووووك المكافأة! 🎉🎊🎆</div>
-    </div>
+  <div id="winnerBox">
+    <div class="winner-text">🏆 الفائز المحظوظ 🏆</div>
+    <div id="winnerName"></div>
+    <div>🎉 مبروك الجائزة من مهندس محمد 🎉</div>
   </div>
 
   <script type="module">
@@ -263,32 +223,34 @@
     const app = initializeApp(config);
     const db = getDatabase(app);
 
-    const playersBtn = document.getElementById("playersBtn");
-    const playersPanel = document.getElementById("playersPanel");
-    const playersList = document.getElementById("playersList");
-    const playersCount = document.getElementById("playersCount");
-    const viewersCount = document.getElementById("viewersCount");
     const wheel = document.getElementById("wheel");
     const winnerBox = document.getElementById("winnerBox");
     const winnerName = document.getElementById("winnerName");
     const countdownContainer = document.getElementById("countdownContainer");
     const countdownTime = document.getElementById("countdownTime");
-    const status = document.getElementById("status");
+    const viewersCount = document.getElementById("viewersCount");
+    const playersCount = document.getElementById("playersCount");
+    const playersBtn = document.getElementById("playersBtn");
+    const playersPanel = document.getElementById("playersPanel");
+    const playersList = document.getElementById("playersList");
 
     let players = [];
+    let isSpinning = false;
     let countdownInterval;
     const viewerId = "viewer_" + Math.random().toString(36).substr(2, 9);
 
-    // 🔹 زر اللاعبين: يظهر ثم يختفي تلقائياً بعد 5 ثوانٍ
-    playersBtn.addEventListener("click", () => {
-      updatePlayersList();
-      playersPanel.classList.add("show");
-      setTimeout(() => playersPanel.classList.remove("show"), 5000);
-    });
-
+    // 🟢 حفظ المشاهدين
     const viewerRef = ref(db, `wheel/viewers/${viewerId}`);
     set(viewerRef, { timestamp: Date.now() });
+    window.addEventListener("beforeunload", () => remove(viewerRef));
 
+    // 🟢 تحديث المشاهدين
+    onValue(ref(db, "wheel/viewers"), (snap) => {
+      const data = snap.val() || {};
+      viewersCount.textContent = Object.keys(data).length;
+    });
+
+    // 🟢 تحديث اللاعبين
     onValue(ref(db, "wheel/players"), (snap) => {
       const data = snap.val() || {};
       players = Object.values(data);
@@ -296,17 +258,25 @@
       drawWheel(players);
     });
 
-    onValue(ref(db, "wheel/viewers"), (snap) => {
-      const data = snap.val() || {};
-      viewersCount.textContent = Object.keys(data).length;
+    // 🟢 عند الضغط على الزر لعرض اللاعبين
+    playersBtn.addEventListener("click", () => {
+      updatePlayersList();
+      playersPanel.classList.add("show");
+      setTimeout(() => playersPanel.classList.remove("show"), 5000);
     });
 
-    window.addEventListener("beforeunload", () => remove(viewerRef));
+    // 🟢 مزامنة دوران العجلة
+    onValue(ref(db, "wheel/state"), (snap) => {
+      const data = snap.val();
+      if (data && !isSpinning) {
+        isSpinning = true;
+        spinWheel(data.rotation, data.winner, data.duration);
+      }
+    });
 
     function drawWheel(players) {
-      if (players.length === 0) return;
-      const count = players.length;
-      const angle = 360 / count;
+      if (!players.length) return;
+      const angle = 360 / players.length;
       wheel.innerHTML = '<div class="pointer"></div>';
       players.forEach((p, i) => {
         const seg = document.createElement("div");
@@ -317,12 +287,35 @@
       });
     }
 
+    function spinWheel(rotation, winner, duration) {
+      winnerBox.style.display = "none";
+      countdownContainer.classList.add("active");
+      let remaining = duration;
+      countdownTime.textContent = remaining;
+      countdownInterval = setInterval(() => {
+        remaining--;
+        countdownTime.textContent = remaining;
+        if (remaining <= 0) clearInterval(countdownInterval);
+      }, 1000);
+
+      wheel.style.transition = `transform ${duration}s cubic-bezier(0.33, 1, 0.68, 1)`;
+      wheel.style.transform = `rotate(${rotation}deg)`;
+
+      setTimeout(() => {
+        clearInterval(countdownInterval);
+        countdownContainer.classList.remove("active");
+        winnerBox.style.display = "block";
+        winnerName.textContent = winner;
+        isSpinning = false;
+      }, duration * 1000);
+    }
+
     function updatePlayersList() {
-      if (players.length === 0) {
-        playersList.innerHTML = '<li class="player-item-panel">🎮 لا يوجد لاعبين مشاركين حاليًا</li>';
+      if (!players.length) {
+        playersList.innerHTML = '<li class="player-item-panel">🎮 لا يوجد لاعبين مشاركين حالياً</li>';
         return;
       }
-      playersList.innerHTML = players.map((p, i) => `<li class="player-item-panel">🎮 ${i + 1}. ${p.name}</li>`).join('');
+      playersList.innerHTML = players.map((p, i) => `<li class="player-item-panel">🎯 ${i + 1}. ${p.name}</li>`).join('');
     }
   </script>
 </body>
