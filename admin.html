@@ -390,6 +390,12 @@
         <div>عدد اللاعبين</div>
         <div class="number" id="playerCount">0</div>
       </div>
+
+      <div id="winnerBox" style="display: none; background: linear-gradient(135deg, rgba(255,107,107,0.9), rgba(255,165,0,0.9)); border-radius: 15px; padding: 20px; margin-top: 20px; border: 2px solid #FFD700; animation: celebrateAppear 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);">
+        <div style="font-size: 1.5rem; margin-bottom: 10px;">🏆 الفائز الحظيظ 🏆</div>
+        <div id="winnerName" style="font-size: 2.5rem; font-weight: 900; color: #FFD700; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); margin: 15px 0;">-</div>
+        <div style="font-size: 1.1rem; margin-top: 10px;">مبروك المكافأة! 🎁</div>
+      </div>
     </div>
 
     <!-- القسم الأيمن: الإضافة والتحكم -->
@@ -441,6 +447,8 @@
     const db = getDatabase(app);
 
     const wheel = document.getElementById("wheel");
+    const winnerBox = document.getElementById("winnerBox");
+    const winnerName = document.getElementById("winnerName");
     const playersList = document.getElementById("playersList");
     const playerCount = document.getElementById("playerCount");
     const durationInput = document.getElementById("durationControl");
