@@ -700,6 +700,15 @@
         showStatus("⚠️ اكتب اسم اللاعب أولاً", "error");
         return;
       }
+
+      // التحقق من وجود الاسم مسبقاً
+      const nameExists = players.some(p => p.name.toLowerCase() === name.toLowerCase());
+      if (nameExists) {
+        showStatus("⚠️ تم إضافة هذا الاسم سابقاً!", "error");
+        document.getElementById("playerName").value = "";
+        return;
+      }
+
       set(push(ref(db, "wheel/players")), { name });
       document.getElementById("playerName").value = "";
       showStatus("✅ تم إضافة اللاعب بنجاح", "success");
