@@ -1,143 +1,148 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>🎡 دائرة الحظ | المهندس محمد</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body {
-      height: 100%; width: 100%;
-      overflow: hidden;
-      background: linear-gradient(135deg, #FF1493, #FFD700, #00CED1, #FF69B4, #32CD32);
-      background-size: 400% 400%;
-      animation: bgMove 10s ease infinite;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      font-family: "Cairo", sans-serif; color: white;
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{
+      height:100%;width:100%;overflow:hidden;
+      font-family:"Cairo",sans-serif;color:#fff;
+      background:linear-gradient(135deg,#FF1493,#FFD700,#00CED1,#FF69B4,#32CD32);
+      background-size:400% 400%;
+      animation:bgMove 10s ease infinite;
+      display:flex;flex-direction:column;align-items:center;justify-content:center
     }
-    @keyframes bgMove {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    h1 {
-      font-size: clamp(1.5rem, 5vw, 2.2rem);
-      margin-bottom: 5px;
-      background: linear-gradient(90deg, #FFD700, #FF1493, #32CD32);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: glowText 2s ease-in-out infinite;
-      text-shadow: 0 0 10px rgba(255,255,255,0.4);
-      text-align: center;
-    }
-    @keyframes glowText {
-      0%,100% { filter: drop-shadow(0 0 10px rgba(255,215,0,0.7)); }
-      50% { filter: drop-shadow(0 0 25px rgba(255,105,180,1)); }
-    }
-    .subtitle { font-size: 1rem; margin-bottom: 8px; opacity: 0.9; text-shadow: 0 0 5px #000; }
-
-    .info-section {
-      display: flex; gap: 10px; justify-content: center;
-      margin-bottom: 10px; flex-wrap: wrap;
-    }
-    .info-box {
-      background: rgba(255,255,255,0.2);
-      border: 2px solid #FFD700; border-radius: 10px;
-      padding: 6px 12px; font-weight: bold; font-size: 0.9rem;
-      text-shadow: 0 0 5px #000;
+    @keyframes bgMove{
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%}
     }
 
-    .countdown-container {
-      display: none;
-      font-size: 1.1rem;
-      margin-bottom: 10px;
-      background: rgba(255,215,0,0.15);
-      border: 2px solid #FFD700;
-      border-radius: 12px;
-      padding: 8px 18px;
-      color: #FFD700;
-      font-weight: bold;
-      text-shadow: 0 0 5px #000;
-      animation: glow 1s infinite alternate;
+    .topbar{
+      position:fixed;top:8px;right:8px;left:8px;
+      display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:100
     }
-    @keyframes glow {
-      0% { box-shadow: 0 0 10px #FFD700; }
-      100% { box-shadow: 0 0 25px #FF69B4; }
+    .title{
+      font-size:clamp(1.5rem,5vw,2.2rem);text-align:center;
+      background:linear-gradient(90deg,#FFD700,#FF1493,#32CD32);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      filter:drop-shadow(0 0 10px rgba(255,215,0,.7));
+      animation:glowText 2s ease-in-out infinite
+    }
+    @keyframes glowText{
+      0%,100%{filter:drop-shadow(0 0 10px rgba(255,215,0,.7))}
+      50%{filter:drop-shadow(0 0 25px rgba(255,105,180,1))}
     }
 
-    .wheel-container {
-      width: 90%; max-width: 380px;
-      aspect-ratio: 1; position: relative;
-      display: flex; align-items: center; justify-content: center;
-      filter: drop-shadow(0 0 30px rgba(255,215,0,0.4));
+    /* زر الصوت في الزاوية اليمنى العليا */
+    .sound-toggle{
+      position:fixed;top:10px;right:12px;z-index:110;
+      width:40px;height:40px;border-radius:50%;
+      background:radial-gradient(circle at 30% 30%,#FFF7C2,#FFD700);
+      border:2px solid #fff;display:flex;align-items:center;justify-content:center;
+      box-shadow:0 0 18px rgba(255,215,0,.8),0 0 6px rgba(255,255,255,.6) inset;
+      cursor:pointer;pointer-events:auto;transition:transform .15s ease
     }
-    #wheel {
-      width: 100%; height: 100%;
-      border-radius: 50%; border: 10px solid #FFD700;
-      background: conic-gradient(#FF1493, #FFD700, #00CED1, #FF69B4, #32CD32, #FF1493);
-      box-shadow: 0 0 50px rgba(255,215,0,0.5), inset 0 0 20px rgba(0,0,0,0.3);
-      transition: transform 0s linear;
-      position: relative;
+    .sound-toggle:hover{transform:scale(1.06)}
+    .sound-toggle span{font-size:1.1rem;filter:drop-shadow(0 0 6px rgba(255,215,0,.9))}
+    .subtitle{font-size:1rem;margin-top:58px;margin-bottom:8px;opacity:.9;text-shadow:0 0 5px #000}
+
+    /* إشعار ذهبي عائم في الزاوية اليمنى العليا */
+    .toast{
+      position:fixed;top:60px;right:12px;z-index:120;
+      background:linear-gradient(135deg,rgba(255,215,0,.95),rgba(255,105,180,.95));
+      color:#000;font-weight:800;border-radius:10px;border:2px solid #fff;
+      padding:8px 12px;opacity:0;transform:translateY(-10px);
+      box-shadow:0 0 24px rgba(255,215,0,.9),0 0 10px rgba(255,255,255,.8) inset;
+      transition:opacity .25s ease,transform .25s ease;pointer-events:none
     }
-    .pointer {
-      width: 20px; height: 40px;
-      background: linear-gradient(90deg, #FFD700, #FFA500);
-      clip-path: polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%);
-      position: absolute; top: -25px; left: 50%;
-      transform: translateX(-50%); z-index: 10;
+    .toast.show{opacity:1;transform:translateY(0)}
+
+    .info-section{display:flex;gap:10px;justify-content:center;margin-bottom:10px;flex-wrap:wrap}
+    .info-box{background:rgba(255,255,255,.2);border:2px solid #FFD700;border-radius:10px;padding:6px 12px;font-weight:bold;font-size:.9rem;text-shadow:0 0 5px #000}
+
+    .countdown-container{
+      display:none;font-size:1.1rem;margin-bottom:10px;background:rgba(255,215,0,.15);
+      border:2px solid #FFD700;border-radius:12px;padding:8px 18px;color:#FFD700;font-weight:bold;text-shadow:0 0 5px #000;
+      animation:glow 1s infinite alternate
+    }
+    @keyframes glow{0%{box-shadow:0 0 10px #FFD700}100%{box-shadow:0 0 25px #FF69B4}}
+
+    .wheel-wrapper{
+      position:relative;width:90%;max-width:420px;margin:6px auto 0;
+      display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 0 30px rgba(255,215,0,.4));
+      aspect-ratio:1
+    }
+    .fixed-pointer{
+      position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:0;height:0;z-index:30;
+      border-left:14px solid transparent;border-right:14px solid transparent;border-bottom:28px solid #FFD700;
+      filter:drop-shadow(0 4px 8px rgba(0,0,0,.4))
+    }
+    .fixed-pointer::after{
+      content:"";position:absolute;top:20px;left:-10px;width:20px;height:10px;border-radius:6px;
+      background:linear-gradient(90deg,#FFD700,#FFA500)
+    }
+    .wheel-container{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+    #wheel{
+      width:100%;height:100%;border-radius:50%;border:10px solid #FFD700;
+      background:conic-gradient(#FF1493,#FFD700,#00CED1,#FF69B4,#32CD32,#FF1493);
+      box-shadow:0 0 50px rgba(255,215,0,.5),inset 0 0 20px rgba(0,0,0,.3);
+      transition:transform 0s linear;position:relative;z-index:5
+    }
+    .segment{position:absolute;inset:0;display:flex;align-items:flex-start;justify-content:center;transform-origin:50% 50%}
+    .segment span{
+      display:block;text-align:center;color:#fff;font-weight:900;text-shadow:2px 2px 4px rgba(0,0,0,.7);
+      margin-top:calc(12% + 10px);line-height:1.2;max-width:32%;word-break:break-word;pointer-events:none;user-select:none
     }
 
-    #winnerBox {
-      display: none;
-      position: absolute; top: 45%; left: 50%;
-      transform: translate(-50%, -50%);
-      background: linear-gradient(135deg, #FFD700, #FF69B4, #32CD32);
-      color: white; padding: 25px; border-radius: 20px;
-      border: 3px solid #fff; text-align: center;
-      box-shadow: 0 0 100px rgba(255,255,255,0.6);
-      width: 90%; max-width: 380px; z-index: 1000;
+    #winnerBox{
+      display:none;position:absolute;z-index:40;top:50%;left:50%;transform:translate(-50%,-50%);
+      background:linear-gradient(135deg,#FFD700,#FF69B4,#32CD32);color:#fff;padding:22px;border-radius:16px;border:3px solid #fff;
+      box-shadow:0 0 100px rgba(255,255,255,.6);text-align:center;width:min(90%,420px)
     }
-    #winnerName {
-      font-size: 2rem; font-weight: 900;
-      margin: 10px 0; color: #fff; text-shadow: 0 0 10px #000;
-      animation: winnerPulse 1.2s infinite alternate;
+    #winnerName{
+      font-size:clamp(1.4rem,6vw,2rem);font-weight:900;margin:10px 0;color:#fff;text-shadow:0 0 10px #000;
+      animation:winnerPulse 1.2s infinite alternate
     }
-    @keyframes winnerPulse {
-      0% { transform: scale(1); text-shadow: 0 0 10px #FFD700; }
-      100% { transform: scale(1.05); text-shadow: 0 0 30px #FF69B4; }
-    }
+    @keyframes winnerPulse{0%{transform:scale(1);text-shadow:0 0 10px #FFD700}100%{transform:scale(1.05);text-shadow:0 0 30px #FF69B4}}
 
-    .firework {
-      position: fixed; width: 6px; height: 6px;
-      border-radius: 50%; pointer-events: none; z-index: 2000;
+    .players-btn{
+      margin-top:15px;background:linear-gradient(135deg,#FF1493,#FFD700);border:3px solid #32CD32;color:#fff;padding:12px 22px;border-radius:50px;
+      font-weight:bold;cursor:pointer;font-size:1rem;box-shadow:0 0 20px rgba(255,215,0,.6);animation:pulse 2s ease-in-out infinite
     }
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
 
-    .players-btn {
-      margin-top: 15px;
-      background: linear-gradient(135deg, #FF1493, #FFD700);
-      border: 3px solid #32CD32;
-      color: white; padding: 12px 22px;
-      border-radius: 50px; font-weight: bold;
-      cursor: pointer; font-size: 1rem;
-      box-shadow: 0 0 20px rgba(255,215,0,0.6);
-      animation: pulse 2s ease-in-out infinite;
+    .players-panel{
+      display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#FF69B4,#FFD700,#00CED1);
+      border-radius:20px;border:4px solid #32CD32;padding:22px;width:90%;max-width:380px;max-height:70vh;box-shadow:0 0 80px rgba(255,20,147,.9);
+      z-index:1000;overflow-y:auto
     }
-    @keyframes pulse {
-      0%,100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-    }
+    .players-panel.show{display:block!important}
+    .players-panel h2{color:#32CD32;text-align:center;margin-bottom:10px}
+    .player-item-panel{background:rgba(255,255,255,.2);padding:8px;margin:5px 0;border-radius:8px;border-left:4px solid #32CD32;font-weight:bold}
+    .players-panel::-webkit-scrollbar{width:8px}
+    .players-panel::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#FFD700,#FF69B4);border-radius:10px}
 
-    @media (max-width: 600px) {
-      html, body { overflow: hidden; }
-      #wheel { border-width: 8px; }
-      .pointer { height: 30px; width: 15px; }
-      .players-btn { padding: 10px 18px; font-size: 0.9rem; }
+    .firework{position:fixed;width:6px;height:6px;border-radius:50%;pointer-events:none;z-index:2000}
+
+    @media(max-width:600px){
+      #wheel{border-width:8px}
+      .fixed-pointer{border-left-width:12px;border-right-width:12px;border-bottom-width:24px}
+      .players-btn{padding:10px 18px;font-size:.95rem}
+      .segment span{max-width:40%;margin-top:calc(14% + 8px)}
     }
   </style>
 </head>
 <body>
-  <h1>🎡 دائرة الحظ</h1>
+  <!-- شريط علوي وهمي للمحاذاة + زر الصوت في اليمين -->
+  <div class="topbar">
+    <h1 class="title">🎡 دائرة الحظ</h1>
+  </div>
+  <button id="soundToggle" class="sound-toggle" aria-label="Toggle Sound" title="تشغيل/كتم الصوت"><span id="soundIcon">🔈</span></button>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
   <div class="subtitle">العرض المباشر بإشراف المهندس محمد</div>
 
   <div class="info-section">
@@ -146,158 +151,244 @@
   </div>
 
   <div class="countdown-container" id="countdownContainer">
-    ⏳ توقف العجلة بعد <span id="countdownTime">0</span> ثانية
+    ⏳ تتوقف العجلة بعد <span id="countdownTime">0</span> ثانية
   </div>
 
-  <div class="wheel-container">
-    <div id="wheel"><div class="pointer"></div></div>
-    <div id="winnerBox">
-      <div>🏆 الفائز المحظوظ 🏆</div>
-      <div id="winnerName"></div>
-      <div>🎉 مبروك الجائزة 🎊</div>
+  <div class="wheel-wrapper">
+    <div class="fixed-pointer" aria-hidden="true"></div>
+    <div class="wheel-container">
+      <div id="wheel"></div>
+      <div id="winnerBox">
+        <div>🏆 الفائز المحظوظ 🏆</div>
+        <div id="winnerName"></div>
+        <div>🎉 مبروك الجائزة 🎊</div>
+      </div>
     </div>
   </div>
 
   <button class="players-btn" id="playersBtn">👥 عرض اللاعبين</button>
+  <div class="players-panel" id="playersPanel">
+    <h2>🎮 قائمة اللاعبين</h2>
+    <div id="playersList"></div>
+  </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getDatabase, ref, onValue, set, remove, onDisconnect } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
+    /* ========= Firebase ========= */
     const config = {
-      apiKey: "AIzaSyAfMcEkpOXgWGE-1d8EVZAJJXXMNeh2thQ",
-      authDomain: "luck-wheel-7f514.firebaseapp.com",
-      databaseURL: "https://luck-wheel-7f514-default-rtdb.firebaseio.com",
-      projectId: "luck-wheel-7f514",
-      storageBucket: "luck-wheel-7f514.firebasestorage.app",
-      messagingSenderId: "845157453311",
-      appId: "1:845157453311:web:c7e9e884c8aa745885ebca"
+      apiKey:"AIzaSyAfMcEkpOXgWGE-1d8EVZAJJXXMNeh2thQ",
+      authDomain:"luck-wheel-7f514.firebaseapp.com",
+      databaseURL:"https://luck-wheel-7f514-default-rtdb.firebaseio.com",
+      projectId:"luck-wheel-7f514",
+      storageBucket:"luck-wheel-7f514.firebasestorage.app",
+      messagingSenderId:"845157453311",
+      appId:"1:845157453311:web:c7e9e884c8aa745885ebca"
     };
-
     const app = initializeApp(config);
-    const db = getDatabase(app);
+    const db  = getDatabase(app);
 
-    const wheel = document.getElementById("wheel");
-    const winnerBox = document.getElementById("winnerBox");
-    const winnerName = document.getElementById("winnerName");
-    const viewersCount = document.getElementById("viewersCount");
-    const playersCount = document.getElementById("playersCount");
-    const countdownContainer = document.getElementById("countdownContainer");
-    const countdownTime = document.getElementById("countdownTime");
+    /* ========= Elements ========= */
+    const wheel            = document.getElementById("wheel");
+    const winnerBox        = document.getElementById("winnerBox");
+    const winnerNameEl     = document.getElementById("winnerName");
+    const viewersCountEl   = document.getElementById("viewersCount");
+    const playersCountEl   = document.getElementById("playersCount");
+    const playersBtn       = document.getElementById("playersBtn");
+    const playersPanel     = document.getElementById("playersPanel");
+    const playersList      = document.getElementById("playersList");
+    const countdownCont    = document.getElementById("countdownContainer");
+    const countdownTimeEl  = document.getElementById("countdownTime");
+    const soundToggleBtn   = document.getElementById("soundToggle");
+    const soundIcon        = document.getElementById("soundIcon");
+    const toastEl          = document.getElementById("toast");
 
+    /* ========= State ========= */
     let players = [];
     let isSpinning = false;
-    let countdownInterval;
+    let countdownInterval = null;
+    let tickInterval = null;
+    let isMuted = false;
 
-    // 🟢 المشاهدين (Realtime)
-    const viewerId = "viewer_" + Math.random().toString(36).substr(2, 9);
+    /* ========= Audio (روابط عامة) ========= */
+    const drumRoll = new Audio("https://cdn.pixabay.com/download/audio/2021/10/19/audio_3c8fd4c2a5.mp3?filename=drum-roll-105297.mp3");
+    const woodenTickSrc = "https://cdn.pixabay.com/download/audio/2022/03/15/audio_0e8b8a1d7e.mp3?filename=wood-click-1-100248.mp3";
+    const applause = new Audio("https://cdn.pixabay.com/download/audio/2023/03/10/audio_31e13b1882.mp3?filename=applause-cheering-14677.mp3");
+    const celebrationMusic = new Audio("https://cdn.pixabay.com/download/audio/2022/10/18/audio_5cbf36b08c.mp3?filename=party-horn-and-crowd-11245.mp3");
+    celebrationMusic.loop = false;
+    [drumRoll, applause, celebrationMusic].forEach(a=>{a.volume=.85});
+
+    // تفعيل الصوت بعد أول تفاعل (لسياسات المتصفح)
+    let soundUnlocked=false;
+    const unlock=()=>{ if(soundUnlocked) return; const s=new Audio(woodenTickSrc); s.volume=0.001; s.play().finally(()=>{soundUnlocked=true}); document.removeEventListener("click",unlock); document.removeEventListener("touchstart",unlock); };
+    document.addEventListener("click",unlock,{once:true}); document.addEventListener("touchstart",unlock,{once:true});
+
+    /* ========= Mute / Unmute + Toast ========= */
+    function applyMuteState(){
+      [drumRoll, applause, celebrationMusic].forEach(a=>{ a.muted = isMuted; });
+      soundIcon.textContent = isMuted ? "🔇" : "🔈";
+      showToast(isMuted ? "🔇 الصوت مغلق" : "🔈 الصوت مفعل");
+    }
+    soundToggleBtn.addEventListener("click",()=>{
+      isMuted = !isMuted; applyMuteState();
+    });
+    function showToast(text){
+      toastEl.textContent = text;
+      toastEl.classList.add("show");
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(()=> toastEl.classList.remove("show"), 2000);
+    }
+
+    /* ========= Live Viewers ========= */
+    const viewerId  = "viewer_" + Math.random().toString(36).slice(2,11);
     const viewerRef = ref(db, `wheel/viewers/${viewerId}`);
     set(viewerRef, { timestamp: Date.now() });
     onDisconnect(viewerRef).remove();
 
-    onValue(ref(db, "wheel/viewers"), (snap) => {
+    onValue(ref(db,"wheel/viewers"), snap=>{
       const data = snap.val() || {};
-      viewersCount.textContent = Object.keys(data).length;
+      viewersCountEl.textContent = Object.keys(data).length;
     });
 
-    // 🟢 اللاعبين
-    onValue(ref(db, "wheel/players"), (snap) => {
+    /* ========= Players ========= */
+    onValue(ref(db,"wheel/players"), snap=>{
       const data = snap.val() || {};
       players = Object.values(data);
-      playersCount.textContent = players.length;
+      playersCountEl.textContent = players.length;
       drawWheel(players);
     });
 
-    // 🟢 دوران العجلة
-    onValue(ref(db, "wheel/state"), (snap) => {
+    playersBtn.addEventListener("click", ()=>{
+      updatePlayersList();
+      playersPanel.classList.add("show");
+      setTimeout(()=>playersPanel.classList.remove("show"), 5000);
+    });
+
+    function updatePlayersList(){
+      if(!players.length){
+        playersList.innerHTML = '<div class="player-item-panel">🎮 لا يوجد لاعبين حاليًا</div>';
+        return;
+      }
+      playersList.innerHTML = players.map((p,i)=>`<div class="player-item-panel">🎯 ${i+1}. ${p.name}</div>`).join("");
+    }
+
+    /* ========= Draw Wheel ========= */
+    function drawWheel(players){
+      wheel.innerHTML = "";
+      if(!players.length) return;
+      const count = players.length;
+      const angle = 360 / count;
+      const dynFont = Math.max(11, Math.min(20, Math.floor(220 / count)));
+      for(let i=0;i<count;i++){
+        const seg = document.createElement("div");
+        seg.className = "segment";
+        seg.style.transform = `rotate(${i*angle}deg)`;
+        const span = document.createElement("span");
+        span.style.transform = `rotate(${-i*angle}deg)`;
+        span.style.fontSize = dynFont + "px";
+        span.textContent = players[i].name;
+        seg.appendChild(span);
+        wheel.appendChild(seg);
+      }
+    }
+
+    /* ========= Listen to spin state ========= */
+    onValue(ref(db,"wheel/state"), snap=>{
       const data = snap.val();
-      if (data && !isSpinning) {
+      if(data && !isSpinning){
         isSpinning = true;
         spinWheel(data.rotation, data.winner, data.duration);
       }
     });
 
-    function drawWheel(players) {
-      if (!players.length) return;
-      const angle = 360 / players.length;
-      wheel.innerHTML = '<div class="pointer"></div>';
-      players.forEach((p, i) => {
-        const seg = document.createElement("div");
-        seg.classList.add("segment");
-        seg.style.transform = `rotate(${i * angle}deg)`;
-        seg.innerHTML = `<span style="transform:rotate(${-i * angle}deg)">${p.name}</span>`;
-        wheel.appendChild(seg);
+    /* ========= Spin with sounds ========= */
+    function spinWheel(rotation, winner, duration){
+      try{ drumRoll.currentTime=0; if(!isMuted) drumRoll.play().catch(()=>{});}catch(e){}
+      if(countdownInterval) clearInterval(countdownInterval);
+      if(tickInterval) clearInterval(tickInterval);
+
+      winnerBox.style.display="none";
+      countdownCont.style.display="block";
+      let remaining = Math.max(0, Math.floor(duration));
+      countdownTimeEl.textContent = remaining;
+      countdownInterval = setInterval(()=>{
+        remaining--;
+        countdownTimeEl.textContent = remaining;
+        if(remaining<=0) clearInterval(countdownInterval);
+      },1000);
+
+      // دوران العجلة
+      wheel.style.transition = `transform ${duration}s cubic-bezier(0.33,1,0.68,1)`;
+      wheel.style.transform  = `rotate(${rotation}deg)`;
+
+      // صوت احتكاك خشبي سريع طوال الدوران
+      const tickMs = 120;
+      const start = performance.now();
+      tickInterval = setInterval(()=>{
+        if(isMuted) return; // لا تُصدر صوت إن كان كاتم
+        const t = new Audio(woodenTickSrc);
+        t.volume=.28; t.play().catch(()=>{});
+        if(performance.now()-start > duration*1000){ clearInterval(tickInterval); }
+      }, tickMs);
+
+      setTimeout(()=>{
+        countdownCont.style.display="none";
+        try{ drumRoll.pause(); drumRoll.currentTime=0; }catch(e){}
+        if(tickInterval) clearInterval(tickInterval);
+        showWinner(winner);
+        isSpinning=false;
+      }, duration*1000);
+    }
+
+    /* ========= Winner: fireworks 10s + music only during fireworks ========= */
+    function showWinner(name){
+      winnerBox.style.display="block";
+      winnerNameEl.textContent = name;
+
+      if(!isMuted){
+        try{ celebrationMusic.currentTime=0; celebrationMusic.play().catch(()=>{});}catch(e){}
+        try{ applause.currentTime=0; applause.play().catch(()=>{});}catch(e){}
+      }
+      playFireworks(10000, ()=>{
+        try{ celebrationMusic.pause(); celebrationMusic.currentTime=0; }catch(e){}
       });
     }
 
-    function spinWheel(rotation, winner, duration) {
-      winnerBox.style.display = "none";
-      countdownContainer.style.display = "block";
-      let remaining = duration;
-      countdownTime.textContent = remaining;
-      countdownInterval = setInterval(() => {
-        remaining--;
-        countdownTime.textContent = remaining;
-        if (remaining <= 0) clearInterval(countdownInterval);
-      }, 1000);
-
-      wheel.style.transition = `transform ${duration}s cubic-bezier(0.33, 1, 0.68, 1)`;
-      wheel.style.transform = `rotate(${rotation}deg)`;
-
-      setTimeout(() => {
-        countdownContainer.style.display = "none";
-        showWinner(winner);
-        isSpinning = false;
-      }, duration * 1000);
-    }
-
-    function showWinner(name) {
-      winnerBox.style.display = "block";
-      winnerName.textContent = name;
-      playFireworks();
-      playCheer();
-      playCelebration();
-    }
-
-    // 🎆 ألعاب نارية متدرجة
-    function playFireworks() {
-      for (let i = 0; i < 25; i++) {
-        setTimeout(() => {
-          const x = Math.random() * window.innerWidth;
-          const y = Math.random() * (window.innerHeight / 2);
-          const color = ["#FFD700","#FF69B4","#00CED1","#32CD32"][Math.floor(Math.random()*4)];
-          for (let j = 0; j < 20; j++) {
+    function playFireworks(durationMs=10000, onDone=()=>{}){
+      const colors = ["#FFD700","#FF69B4","#00CED1","#32CD32"];
+      const start = performance.now();
+      let last = 0, every = 150;
+      function frame(now){
+        if(now-last >= every){
+          last = now;
+          const x = Math.random()*window.innerWidth;
+          const y = Math.random()*window.innerHeight*0.55;
+          const color = colors[Math.floor(Math.random()*colors.length)];
+          const particles = 22;
+          for(let j=0;j<particles;j++){
             const spark = document.createElement("div");
-            spark.className = "firework";
-            spark.style.left = `${x}px`;
-            spark.style.top = `${y}px`;
+            spark.className="firework";
+            spark.style.left = x+"px"; spark.style.top = y+"px";
             spark.style.background = color;
             document.body.appendChild(spark);
-            const angle = (Math.PI * 2 * j) / 20;
-            const distance = 120 + Math.random() * 150;
+            const angle = (Math.PI*2*j)/particles;
+            const distance = 120 + Math.random()*160;
             spark.animate([
-              { transform: "translate(0,0) scale(1)", opacity: 1 },
-              { transform: `translate(${Math.cos(angle)*distance}px, ${Math.sin(angle)*distance}px) scale(0)`, opacity: 0 }
-            ], { duration: 1200, easing: "ease-out" });
-            setTimeout(() => spark.remove(), 1300);
+              { transform:"translate(0,0) scale(1)", opacity:1 },
+              { transform:`translate(${Math.cos(angle)*distance}px, ${Math.sin(angle)*distance}px) scale(0)`, opacity:0 }
+            ],{duration:1200,easing:"ease-out"});
+            setTimeout(()=>spark.remove(),1250);
           }
-        }, i * 150);
+        }
+        if(now-start < durationMs){ requestAnimationFrame(frame); }
+        else{ onDone(); }
       }
+      requestAnimationFrame(frame);
     }
 
-    // 🔊 صوت التصفيق
-    function playCheer() {
-      const audio = new Audio("https://cdn.pixabay.com/download/audio/2023/03/10/audio_31e13b1882.mp3?filename=applause-cheering-14677.mp3");
-      audio.volume = 0.8;
-      audio.play();
-    }
-
-    // 🔊 صوت احتفال إضافي (موسيقى خلفية سريعة)
-    function playCelebration() {
-      const music = new Audio("https://cdn.pixabay.com/download/audio/2022/10/18/audio_5cbf36b08c.mp3?filename=party-horn-and-crowd-11245.mp3");
-      music.volume = 0.7;
-      music.play();
-    }
+    /* ابدأ بحالة الصوت حسب isMuted (افتراضي مفعل) */
+    applyMuteState();
   </script>
 </body>
 </html>
