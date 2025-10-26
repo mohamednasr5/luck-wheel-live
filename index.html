@@ -1,20 +1,8 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎡 دائرة الحظ - مهندس محمد | العرض المباشر</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>🎡 دائرة الحظ - مهندس محمد | العرض المباشر</title>
   <style>
     * {
@@ -181,17 +169,9 @@
     }
 
     @keyframes celebrateAppear {
-      0% {
-        transform: scale(0);
-        opacity: 0;
-      }
-      70% {
-        transform: scale(1.1);
-      }
-      100% {
-        transform: scale(1);
-        opacity: 1;
-      }
+      0% { transform: scale(0); opacity: 0; }
+      70% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
     }
 
     .winner-text {
@@ -240,81 +220,23 @@
     }
 
     @media (max-width: 768px) {
-      h1 {
-        font-size: 2.5rem;
-      }
-      
-      .wheel-container {
-        width: 100%;
-        max-width: 350px;
-        height: auto;
-        aspect-ratio: 1;
-        margin: 0 auto 40px;
-      }
-
-      #wheel {
-        border-width: 8px;
-      }
-
-      .segment span {
-        font-size: 14px;
-      }
-
-      #winnerName {
-        font-size: 2.5rem;
-      }
-
-      .winner-text {
-        font-size: 1.5rem;
-      }
-
-      .winner-details {
-        font-size: 1.2rem;
-      }
-
-      .countdown-container {
-        margin-bottom: 20px;
-        padding: 10px 20px;
-        font-size: 1rem;
-      }
-
-      .countdown-time {
-        font-size: 2rem;
-      }
+      h1 { font-size: 2.5rem; }
+      .wheel-container { width: 350px; height: 350px; }
+      #wheel { border-width: 8px; }
+      .segment span { font-size: 14px; }
+      #winnerName { font-size: 2.5rem; }
+      .winner-text { font-size: 1.5rem; }
+      .winner-details { font-size: 1.2rem; }
     }
 
     @media (max-width: 480px) {
-      h1 {
-        font-size: 2rem;
-      }
-
-      .subtitle {
-        font-size: 1rem;
-        margin-bottom: 20px;
-      }
-
-      .wheel-container {
-        width: 100%;
-        max-width: 280px;
-        margin: 0 auto 30px;
-      }
-
-      .segment span {
-        font-size: 12px;
-      }
-
-      #winnerName {
-        font-size: 2rem;
-      }
-
-      .winner-text {
-        font-size: 1.3rem;
-      }
-
-      #winnerBox {
-        padding: 20px;
-        margin-top: 20px;
-      }
+      h1 { font-size: 2rem; }
+      .subtitle { font-size: 1rem; margin-bottom: 20px; }
+      .wheel-container { width: 100%; max-width: 280px; margin: 0 auto 30px; }
+      .segment span { font-size: 12px; }
+      #winnerName { font-size: 2rem; }
+      .winner-text { font-size: 1.3rem; }
+      #winnerBox { padding: 20px; margin-top: 20px; }
     }
   </style>
 </head>
@@ -388,11 +310,9 @@
 
     function drawWheel(players) {
       if (players.length === 0) return;
-      
       const count = players.length;
       const angle = 360 / count;
       wheel.innerHTML = '<div class="pointer"></div>';
-      
       players.forEach((p, i) => {
         const seg = document.createElement("div");
         seg.classList.add("segment");
@@ -407,7 +327,6 @@
       status.textContent = "🎬 جاري الدوران...";
       status.classList.add("spinning");
 
-      // بدء العداد المتناقص
       countdownContainer.classList.add("active");
       let remaining = duration;
       countdownTime.textContent = remaining;
@@ -415,9 +334,7 @@
       countdownInterval = setInterval(() => {
         remaining--;
         countdownTime.textContent = remaining;
-        if (remaining <= 0) {
-          clearInterval(countdownInterval);
-        }
+        if (remaining <= 0) clearInterval(countdownInterval);
       }, 1000);
 
       wheel.style.transition = `transform ${duration}s cubic-bezier(0.33, 1, 0.68, 1)`;
@@ -466,415 +383,15 @@
       const audioContext = new (window.AudioContext || window.webkitAudioContext)();
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
-      
       oscillator.connect(gainNode);
       gainNode.connect(audioContext.destination);
-      
       oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
       oscillator.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.1);
-      
       gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
       gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-      
       oscillator.start(audioContext.currentTime);
       oscillator.stop(audioContext.currentTime + 0.5);
     }
   </script>
 </body>
 </html>
-    body {
-      font-family: "Cairo", "Arial", sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      overflow: hidden;
-    }
-
-    .container {
-      text-align: center;
-      animation: slideDown 0.8s ease;
-    }
-
-    @keyframes slideDown {
-      from { transform: translateY(-50px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-
-    h1 {
-      font-size: 3.5rem;
-      margin-bottom: 10px;
-      text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
-      background: linear-gradient(90deg, #FFD700, #FFA500, #FF69B4);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: glow 2s ease-in-out infinite;
-    }
-
-    @keyframes glow {
-      0%, 100% { filter: drop-shadow(0 0 10px rgba(255,215,0,0.5)); }
-      50% { filter: drop-shadow(0 0 25px rgba(255,215,0,0.8)); }
-    }
-
-    .subtitle {
-      font-size: 1.3rem;
-      margin-bottom: 40px;
-      opacity: 0.9;
-      letter-spacing: 2px;
-    }
-
-    .wheel-container {
-      position: relative;
-      width: 500px;
-      height: 500px;
-      margin: 0 auto 60px;
-      filter: drop-shadow(0 0 40px rgba(255,215,0,0.4));
-    }
-
-    #wheel {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      border: 12px solid #FFD700;
-      transition: transform 0s linear;
-      background: conic-gradient(#FF6B6B, #4ECDC4, #FFE66D, #95E1D3, #FF8C42, #A8E6CF);
-      position: relative;
-      box-shadow: 0 0 60px rgba(255,215,0,0.6), inset 0 0 30px rgba(0,0,0,0.3);
-    }
-
-    .pointer {
-      width: 20px;
-      height: 40px;
-      background: linear-gradient(90deg, #FFD700, #FFA500);
-      clip-path: polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%);
-      position: absolute;
-      top: -30px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 20;
-      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
-    }
-
-    .segment {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      transform-origin: 50% 50%;
-      padding-top: 40px;
-    }
-
-    .segment span {
-      font-size: 18px;
-      font-weight: bold;
-      color: #fff;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-      max-width: 80px;
-      text-align: center;
-      line-height: 1.3;
-    }
-
-    .status {
-      font-size: 1.2rem;
-      margin-bottom: 30px;
-      height: 30px;
-      min-height: 30px;
-    }
-
-    .status.spinning {
-      color: #FFD700;
-      animation: pulse 1s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.6; }
-    }
-
-    .countdown-container {
-      display: none;
-      font-size: 1.3rem;
-      margin-bottom: 20px;
-      padding: 15px 30px;
-      background: rgba(255,215,0,0.2);
-      border: 2px solid #FFD700;
-      border-radius: 10px;
-      color: #FFD700;
-      font-weight: bold;
-    }
-
-    .countdown-container.active {
-      display: block;
-    }
-
-    .countdown-time {
-      font-size: 2.5rem;
-      color: #FFD700;
-      font-weight: 900;
-      text-shadow: 0 0 10px rgba(255,215,0,0.8);
-    }
-
-    #winnerBox {
-      display: none;
-      margin-top: 40px;
-      padding: 30px;
-      background: linear-gradient(135deg, rgba(255,107,107,0.9), rgba(255,165,0,0.9));
-      border-radius: 20px;
-      border: 3px solid #FFD700;
-      box-shadow: 0 0 50px rgba(255,215,0,0.6);
-      animation: celebrateAppear 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-
-    @keyframes celebrateAppear {
-      0% {
-        transform: scale(0);
-        opacity: 0;
-      }
-      70% {
-        transform: scale(1.1);
-      }
-      100% {
-        transform: scale(1);
-        opacity: 1;
-      }
-    }
-
-    .winner-text {
-      font-size: 2.5rem;
-      margin-bottom: 10px;
-    }
-
-    #winnerName {
-      font-size: 3.5rem;
-      font-weight: 900;
-      color: #FFD700;
-      text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
-      display: block;
-      margin: 20px 0;
-      animation: winnerPop 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-
-    @keyframes winnerPop {
-      0% { transform: scale(0) rotateY(180deg); }
-      100% { transform: scale(1) rotateY(0); }
-    }
-
-    .confetti {
-      position: fixed;
-      width: 10px;
-      height: 10px;
-      background: #FFD700;
-      pointer-events: none;
-    }
-
-    .medal {
-      font-size: 2rem;
-      animation: rotate 2s linear infinite;
-    }
-
-    @keyframes rotate {
-      from { transform: rotateZ(0deg); }
-      to { transform: rotateZ(360deg); }
-    }
-
-    .winner-details {
-      font-size: 1.5rem;
-      margin-top: 15px;
-      color: #fff;
-      font-weight: 600;
-    }
-
-    @media (max-width: 768px) {
-      h1 {
-        font-size: 2.5rem;
-      }
-      
-      .wheel-container {
-        width: 350px;
-        height: 350px;
-      }
-
-      #wheel {
-        border-width: 8px;
-      }
-
-      .segment span {
-        font-size: 14px;
-      }
-
-      #winnerName {
-        font-size: 2.5rem;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>🎡 دائرة الحظ</h1>
-    <div class="subtitle">العرض المباشر</div>
-    
-    <div class="status" id="status"></div>
-    
-    <div class="countdown-container" id="countdownContainer">
-      توقف العجلة بعد: <div class="countdown-time" id="countdownTime">0</div>
-    </div>
-    
-    <div class="wheel-container">
-      <div id="wheel">
-        <div class="pointer"></div>
-      </div>
-    </div>
-
-    <div id="winnerBox">
-      <div class="winner-text">
-        <span class="medal">🏆</span> الفائز الحظيظ <span class="medal">🏆</span>
-      </div>
-      <span id="winnerName"></span>
-      <div class="winner-details">مبروك المكافأة! 🎁</div>
-    </div>
-  </div>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyAfMcEkpOXgWGE-1d8EVZAJJXXMNeh2thQ",
-      authDomain: "luck-wheel-7f514.firebaseapp.com",
-      databaseURL: "https://luck-wheel-7f514-default-rtdb.firebaseio.com",
-      projectId: "luck-wheel-7f514",
-      storageBucket: "luck-wheel-7f514.firebasestorage.app",
-      messagingSenderId: "845157453311",
-      appId: "1:845157453311:web:c7e9e884c8aa745885ebca"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-
-    const wheel = document.getElementById("wheel");
-    const winnerBox = document.getElementById("winnerBox");
-    const winnerName = document.getElementById("winnerName");
-    const status = document.getElementById("status");
-    const countdownContainer = document.getElementById("countdownContainer");
-    const countdownTime = document.getElementById("countdownTime");
-
-    let players = [];
-    let isSpinning = false;
-    let countdownInterval;
-
-    onValue(ref(db, "wheel/players"), (snapshot) => {
-      const data = snapshot.val() || {};
-      players = Object.values(data);
-      drawWheel(players);
-    });
-
-    onValue(ref(db, "wheel/state"), (snapshot) => {
-      const data = snapshot.val();
-      if (data && !isSpinning) {
-        isSpinning = true;
-        spinWheel(data.rotation, data.winner, data.duration);
-      }
-    });
-
-    function drawWheel(players) {
-      if (players.length === 0) return;
-      
-      const count = players.length;
-      const angle = 360 / count;
-      wheel.innerHTML = '<div class="pointer"></div>';
-      
-      players.forEach((p, i) => {
-        const seg = document.createElement("div");
-        seg.classList.add("segment");
-        seg.style.transform = `rotate(${i * angle}deg)`;
-        seg.innerHTML = `<span style="transform:rotate(${-i * angle}deg)">${p.name}</span>`;
-        wheel.appendChild(seg);
-      });
-    }
-
-    function spinWheel(rotation, winner, duration) {
-      winnerBox.style.display = "none";
-      status.textContent = "🎬 جاري الدوران...";
-      status.classList.add("spinning");
-
-      // بدء العداد المتناقص
-      countdownContainer.classList.add("active");
-      let remaining = duration;
-      countdownTime.textContent = remaining;
-
-      countdownInterval = setInterval(() => {
-        remaining--;
-        countdownTime.textContent = remaining;
-        if (remaining <= 0) {
-          clearInterval(countdownInterval);
-        }
-      }, 1000);
-
-      wheel.style.transition = `transform ${duration}s cubic-bezier(0.33, 1, 0.68, 1)`;
-      wheel.style.transform = `rotate(${rotation}deg)`;
-
-      setTimeout(() => {
-        clearInterval(countdownInterval);
-        countdownContainer.classList.remove("active");
-        status.textContent = "🎉 تم اختيار الفائز!";
-        status.classList.remove("spinning");
-        winnerBox.style.display = "block";
-        winnerName.textContent = winner;
-        createConfetti();
-        playWinnerSound();
-        setTimeout(() => {
-          isSpinning = false;
-          status.textContent = "";
-        }, 5000);
-      }, duration * 1000);
-    }
-
-    function createConfetti() {
-      for (let i = 0; i < 30; i++) {
-        const confetti = document.createElement("div");
-        confetti.className = "confetti";
-        confetti.style.left = Math.random() * window.innerWidth + "px";
-        confetti.style.top = "-10px";
-        confetti.style.background = ["#FFD700", "#FF6B6B", "#4ECDC4", "#FFA500"][Math.floor(Math.random() * 4)];
-        document.body.appendChild(confetti);
-
-        const duration = Math.random() * 2 + 2;
-        const xMove = (Math.random() - 0.5) * 200;
-        confetti.animate([
-          { transform: "translateY(0) translateX(0) rotate(0deg)", opacity: 1 },
-          { transform: `translateY(${window.innerHeight}px) translateX(${xMove}px) rotate(360deg)`, opacity: 0 }
-        ], {
-          duration: duration * 1000,
-          easing: "cubic-bezier(0.25, 0.46, 0.45, 0.94)"
-        });
-
-        setTimeout(() => confetti.remove(), duration * 1000);
-      }
-    }
-
-    function playWinnerSound() {
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-      
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-      
-      oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-      oscillator.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.1);
-      
-      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-      
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.5);
-    }
-  </script>
-</body>
-</html>
-
