@@ -7,72 +7,54 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: "Cairo", sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); color: white; min-height: 100vh; }
-    
     .login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); display: flex; align-items: center; justify-content: center; z-index: 9999; }
     .login-screen.hidden { display: none; }
-    
     .login-box { background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border-radius: 20px; padding: 40px; border: 1px solid rgba(255,255,255,0.2); text-align: center; width: 100%; max-width: 350px; }
     .login-box h1 { font-size: 2.5rem; margin-bottom: 15px; background: linear-gradient(90deg, #FFD700, #FFA500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     .login-box p { font-size: 1rem; margin-bottom: 20px; opacity: 0.9; }
-    
     .pwd-group { display: flex; gap: 10px; margin-bottom: 20px; }
     .pwd-group input { flex: 1; padding: 12px; border: 2px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white; border-radius: 8px; font-size: 1rem; }
     .pwd-group input::placeholder { color: rgba(255,255,255,0.6); }
     .pwd-group input:focus { outline: none; border-color: #FFD700; background: rgba(255,255,255,0.2); }
-    
     .toggle-btn { padding: 12px 15px; background: linear-gradient(135deg, rgba(255,215,0,0.3), rgba(255,165,0,0.3)); border: 2px solid rgba(255,255,255,0.3); color: #FFD700; cursor: pointer; font-size: 1.1rem; border-radius: 8px; }
     .toggle-btn:hover { background: linear-gradient(135deg, rgba(255,215,0,0.5), rgba(255,165,0,0.5)); }
-    
     .login-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, #FFD700, #FFA500); color: #333; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 10px; }
     .login-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255,215,0,0.4); }
-    
     .error-msg { color: #FF6B6B; font-size: 0.9rem; margin-top: 10px; min-height: 20px; }
-    
     .main-screen { display: none; padding: 20px; }
     .main-screen.visible { display: block; }
-    
     .header { text-align: center; margin-bottom: 30px; }
     .header h1 { font-size: 2.5rem; background: linear-gradient(90deg, #FFD700, #FFA500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
-    
     .stats { display: flex; gap: 15px; justify-content: center; margin-bottom: 30px; flex-wrap: wrap; }
     .stat { background: rgba(255,255,255,0.15); border: 2px solid #FFD700; padding: 20px 30px; border-radius: 10px; text-align: center; min-width: 150px; }
     .stat-num { font-size: 2.5rem; font-weight: 900; color: #FFD700; }
-    
     .container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     .section { background: rgba(255,255,255,0.15); border-radius: 15px; padding: 20px; border: 1px solid rgba(255,255,255,0.2); }
     .section h2 { font-size: 1.5rem; color: #FFD700; margin-bottom: 15px; }
-    
     #wheel { width: 100%; max-width: 300px; height: 300px; margin: 0 auto; border-radius: 50%; border: 8px solid #FFD700; background: conic-gradient(#FF6B6B, #4ECDC4, #FFE66D, #95E1D3, #FF8C42, #A8E6CF); position: relative; }
     .pointer { width: 15px; height: 25px; background: #FFD700; clip-path: polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%); position: absolute; top: -20px; left: 50%; transform: translateX(-50%); z-index: 10; }
     .segment { position: absolute; width: 100%; height: 100%; display: flex; align-items: flex-start; justify-content: center; transform-origin: 50% 50%; padding-top: 20px; }
     .segment span { font-size: 12px; font-weight: bold; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); max-width: 50px; text-align: center; }
-    
     .winner-box { background: linear-gradient(135deg, rgba(255,107,107,0.9), rgba(255,165,0,0.9)); border-radius: 10px; padding: 15px; margin-top: 15px; border: 2px solid #FFD700; display: none; text-align: center; }
     .winner-box.show { display: block; }
     .winner-name { font-size: 1.8rem; font-weight: 900; color: #FFD700; margin: 10px 0; }
-    
     .input-box { display: flex; gap: 8px; margin-bottom: 10px; }
     input[type="text"] { flex: 1; padding: 10px; border: 2px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white; border-radius: 8px; }
     input[type="text"]:focus { outline: none; border-color: #FFD700; background: rgba(255,255,255,0.2); }
-    
     button { padding: 10px 15px; border: none; border-radius: 8px; font-family: inherit; font-weight: bold; cursor: pointer; }
     .btn-add { background: linear-gradient(135deg, #FFD700, #FFA500); color: #333; flex: 0.6; }
     .btn-file { flex: 1; background: linear-gradient(135deg, #A8E6CF, #56CCF2); color: white; font-size: 0.9rem; }
     .btn-clear { width: 100%; background: linear-gradient(135deg, #FF6B6B, #FF8C42); color: white; margin: 10px 0; }
     .btn-spin { width: 100%; background: linear-gradient(135deg, #4ECDC4, #44A08D); color: white; padding: 12px; font-size: 1rem; margin-top: 15px; }
-    
     .players-list { background: rgba(0,0,0,0.2); border-radius: 10px; padding: 10px; max-height: 200px; overflow-y: auto; margin: 10px 0; }
     .player-item { background: rgba(255,215,0,0.1); padding: 10px; margin: 5px 0; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid #FFD700; }
     .delete-btn { background: #FF6B6B; color: white; padding: 5px 10px; font-size: 0.8rem; }
-    
     .slider-box { background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; margin: 15px 0; }
     input[type="range"] { width: 100%; cursor: pointer; }
     .duration-text { text-align: center; font-size: 1.5rem; color: #FFD700; font-weight: bold; margin-bottom: 10px; }
-    
     .msg { padding: 10px; border-radius: 8px; margin: 10px 0; font-weight: bold; }
     .msg.success { background: rgba(78,205,196,0.3); border-left: 4px solid #4ECDC4; }
     .msg.error { background: rgba(255,107,107,0.3); border-left: 4px solid #FF6B6B; }
-    
     @media (max-width: 768px) { .container { grid-template-columns: 1fr; } }
   </style>
 </head>
@@ -89,13 +71,11 @@
       <div class="error-msg" id="errorMsg"></div>
     </div>
   </div>
-
   <div class="main-screen" id="mainScreen">
     <div class="header">
       <h1>🎛️ لوحة التحكم</h1>
       <p style="opacity: 0.9;">دائرة الحظ المتزامنة</p>
     </div>
-
     <div class="stats">
       <div class="stat">
         <div>👥 المشاهدين</div>
@@ -106,7 +86,6 @@
         <div class="stat-num" id="players">0</div>
       </div>
     </div>
-
     <div class="container">
       <div class="section">
         <h2>🎡 عجلة الحظ</h2>
@@ -116,7 +95,6 @@
           <div class="winner-name" id="winnerName">-</div>
         </div>
       </div>
-
       <div class="section">
         <h2>⚙️ إدارة اللاعبين</h2>
         <div class="input-box">
@@ -128,28 +106,23 @@
           <button class="btn-file" id="importBtn">📤 استيراد</button>
         </div>
         <input type="file" id="fileInput" accept=".txt" style="display: none;">
-        
         <div class="players-list" id="playersList">
           <div style="text-align: center; opacity: 0.7;">لا يوجد لاعبين</div>
         </div>
         <button class="btn-clear" id="clearBtn">🧹 مسح الكل</button>
-
         <h2 style="margin-top: 20px;">⏱️ مدة الدوران</h2>
         <div class="slider-box">
           <div class="duration-text"><span id="durationVal">5</span> ثانية</div>
           <input type="range" id="duration" min="1" max="180" value="5">
         </div>
-
         <button class="btn-spin" id="spinBtn">▶️ ابدأ الدوران</button>
         <div id="messages"></div>
       </div>
     </div>
   </div>
-
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
     const config = {
       apiKey: "AIzaSyAfMcEkpOXgWGE-1d8EVZAJJXXMNeh2thQ",
       authDomain: "luck-wheel-7f514.firebaseapp.com",
@@ -159,11 +132,9 @@
       messagingSenderId: "845157453311",
       appId: "1:845157453311:web:c7e9e884c8aa745885ebca"
     };
-
     const app = initializeApp(config);
     const db = getDatabase(app);
-
-    // DOM Elements
+    // DOM
     const loginScreen = document.getElementById('loginScreen');
     const mainScreen = document.getElementById('mainScreen');
     const pwd = document.getElementById('pwd');
@@ -186,11 +157,9 @@
     const exportBtn = document.getElementById('exportBtn');
     const importBtn = document.getElementById('importBtn');
     const fileInput = document.getElementById('fileInput');
-
     let playersData = [];
     let spinDuration = 5;
     let isSpinning = false;
-
     // Toggle Password
     togglePwd.addEventListener('click', () => {
       if (pwd.type === 'password') {
@@ -201,7 +170,6 @@
         togglePwd.textContent = '👁️';
       }
     });
-
     // Login
     function checkLogin() {
       if (pwd.value === '521988') {
@@ -214,22 +182,23 @@
         setTimeout(() => errorMsg.textContent = '', 3000);
       }
     }
-
     loginBtn.addEventListener('click', checkLogin);
     pwd.addEventListener('keypress', (e) => e.key === 'Enter' && checkLogin());
-
     if (localStorage.getItem('adminLogged') === 'true') {
       loginScreen.classList.add('hidden');
       mainScreen.classList.add('visible');
     }
-
     // Duration
     duration.addEventListener('input', () => {
       spinDuration = parseInt(duration.value);
       durationVal.textContent = spinDuration;
     });
-
-    // Firebase Listeners
+    // Firebase Listeners: عداد المشاهدين المتفاعلين فقط (active:true)
+    onValue(ref(db, 'wheel/viewers'), (snap) => {
+      const data = snap.val() || {};
+      const activeCount = Object.values(data).filter(v => v.active).length;
+      viewers.textContent = activeCount;
+    });
     onValue(ref(db, 'wheel/players'), (snap) => {
       const data = snap.val() || {};
       playersData = Object.entries(data).map(([id, p]) => ({id, ...p}));
@@ -237,7 +206,6 @@
       drawWheel();
       updateList();
     });
-
     onValue(ref(db, 'wheel/state'), (snap) => {
       const data = snap.val();
       if (data && !isSpinning) {
@@ -246,12 +214,6 @@
         setTimeout(() => isSpinning = false, data.duration * 1000 + 500);
       }
     });
-
-    onValue(ref(db, 'wheel/viewers'), (snap) => {
-      const data = snap.val() || {};
-      viewers.textContent = Object.keys(data).length;
-    });
-
     // Add Player
     addBtn.addEventListener('click', () => {
       const name = playerName.value.trim();
@@ -268,7 +230,6 @@
       playerName.value = '';
       showMsg('✅ تم الإضافة', 'success');
     });
-
     // Clear All
     clearBtn.addEventListener('click', () => {
       if (confirm('هل تريد مسح الكل؟')) {
@@ -277,7 +238,6 @@
         showMsg('🧹 تم المسح', 'success');
       }
     });
-
     // Export
     exportBtn.addEventListener('click', () => {
       if (playersData.length === 0) {
@@ -294,7 +254,6 @@
       URL.revokeObjectURL(url);
       showMsg('✅ تم التصدير', 'success');
     });
-
     // Import
     importBtn.addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', async (e) => {
@@ -316,7 +275,6 @@
       showMsg(`✅ تم إضافة ${added} ${dup > 0 ? `(${dup} مكرر)` : ''}`, 'success');
       fileInput.value = '';
     });
-
     // Spin
     spinBtn.addEventListener('click', async () => {
       if (!playersData.length) {
@@ -333,7 +291,6 @@
       await set(ref(db, 'wheel/state'), {rotation, winner, duration: spinDuration, timestamp: Date.now()});
       setTimeout(() => spinBtn.disabled = false, spinDuration * 1000 + 1000);
     });
-
     // Draw Wheel
     function drawWheel() {
       if (!playersData.length) return;
@@ -347,7 +304,6 @@
         wheel.appendChild(seg);
       });
     }
-
     function spinWheel(rot, dur, winner) {
       winnerBox.classList.remove('show');
       wheel.style.transition = `transform ${dur}s cubic-bezier(0.33, 1, 0.68, 1)`;
@@ -358,7 +314,6 @@
         showMsg(`🎉 الفائز: ${winner}`, 'success');
       }, dur * 1000);
     }
-
     function updateList() {
       if (!playersData.length) {
         playersList.innerHTML = '<div style="text-align: center; opacity: 0.7;">لا يوجد لاعبين</div>';
@@ -371,9 +326,7 @@
         </div>
       `).join('');
     }
-
     window.delPlayer = (id) => remove(ref(db, `wheel/players/${id}`));
-
     function showMsg(text, type) {
       messages.innerHTML = `<div class="msg ${type}">${text}</div>`;
       setTimeout(() => messages.innerHTML = '', 3000);
