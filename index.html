@@ -148,6 +148,8 @@
       from { transform: rotateZ(0deg); }
       to { transform: rotateZ(360deg); }
     }
+
+    /* زر اللاعبين */
     .players-btn {
       position: fixed;
       left: 15px;
@@ -168,8 +170,8 @@
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.1); }
     }
-    .players-btn:hover { transform: scale(1.15); }
-    .players-btn:active { transform: scale(0.95); }
+
+    /* لوحة اللاعبين */
     .players-panel {
       display: none;
       position: fixed;
@@ -186,13 +188,19 @@
       overflow-y: auto;
       z-index: 2000;
       box-shadow: 0 0 100px rgba(255,20,147,0.9);
+      animation: fadeIn 0.3s ease;
     }
     .players-panel.show { display: block !important; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translate(-50%, -60%); }
+      to { opacity: 1; transform: translate(-50%, -50%); }
+    }
     .players-panel h2 {
       font-size: 1.5rem;
       margin-bottom: 20px;
       color: #32CD32;
       text-shadow: 0 0 10px rgba(50,205,50,0.8);
+      text-align: center;
     }
     .players-list-panel { list-style: none; }
     .player-item-panel {
@@ -204,41 +212,29 @@
       font-weight: bold;
       font-size: 1rem;
     }
-    .overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      z-index: 1500;
-    }
-    .overlay.show { display: block; }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>🎡 دائرة الحظ</h1>
     <div class="subtitle">العرض المباشر</div>
-    
+
     <button class="players-btn" id="playersBtn">👥 اللاعبين</button>
-    <div class="overlay" id="overlay"></div>
     <div class="players-panel" id="playersPanel">
-      <h2>🎮 اللاعبين المشاركين</h2>
+      <h2>🎮 قائمة اللاعبين المشاركين</h2>
       <ul class="players-list-panel" id="playersList"></ul>
     </div>
-    
+
     <div class="status" id="status"></div>
     <div class="info-section">
       <div class="info-box">👥 المشاهدين: <span class="number" id="viewersCount">0</span></div>
       <div class="info-box">🎮 اللاعبين: <span class="number" id="playersCount">0</span></div>
     </div>
-    
+
     <div class="countdown-container" id="countdownContainer">
       توقف العجلة بعد: <div class="countdown-time" id="countdownTime">0</div>
     </div>
-    
+
     <div class="wheel-container">
       <div id="wheel"><div class="pointer"></div></div>
     </div>
@@ -267,42 +263,27 @@
     const app = initializeApp(config);
     const db = getDatabase(app);
 
+    const playersBtn = document.getElementById("playersBtn");
+    const playersPanel = document.getElementById("playersPanel");
+    const playersList = document.getElementById("playersList");
+    const playersCount = document.getElementById("playersCount");
+    const viewersCount = document.getElementById("viewersCount");
     const wheel = document.getElementById("wheel");
     const winnerBox = document.getElementById("winnerBox");
     const winnerName = document.getElementById("winnerName");
-    const status = document.getElementById("status");
     const countdownContainer = document.getElementById("countdownContainer");
     const countdownTime = document.getElementById("countdownTime");
-    const viewersCount = document.getElementById("viewersCount");
-    const playersCount = document.getElementById("playersCount");
-    const playersBtn = document.getElementById("playersBtn");
-    const playersPanel = document.getElementById("playersPanel");
-    const overlay = document.getElementById("overlay");
-    const playersList = document.getElementById("playersList");
+    const status = document.getElementById("status");
 
     let players = [];
-    let isSpinning = false;
     let countdownInterval;
     const viewerId = "viewer_" + Math.random().toString(36).substr(2, 9);
 
-    playersBtn.addEventListener("mousedown", () => {
+    // 🔹 زر اللاعبين: يظهر ثم يختفي تلقائياً بعد 5 ثوانٍ
+    playersBtn.addEventListener("click", () => {
+      updatePlayersList();
       playersPanel.classList.add("show");
-      overlay.classList.add("show");
-    });
-
-    playersBtn.addEventListener("mouseup", () => {
-      playersPanel.classList.remove("show");
-      overlay.classList.remove("show");
-    });
-
-    playersBtn.addEventListener("mouseleave", () => {
-      playersPanel.classList.remove("show");
-      overlay.classList.remove("show");
-    });
-
-    overlay.addEventListener("click", () => {
-      playersPanel.classList.remove("show");
-      overlay.classList.remove("show");
+      setTimeout(() => playersPanel.classList.remove("show"), 5000);
     });
 
     const viewerRef = ref(db, `wheel/viewers/${viewerId}`);
@@ -313,15 +294,6 @@
       players = Object.values(data);
       playersCount.textContent = players.length;
       drawWheel(players);
-      updatePlayersList();
-    });
-
-    onValue(ref(db, "wheel/state"), (snap) => {
-      const data = snap.val();
-      if (data && !isSpinning) {
-        isSpinning = true;
-        spinWheel(data.rotation, data.winner, data.duration);
-      }
     });
 
     onValue(ref(db, "wheel/viewers"), (snap) => {
@@ -329,9 +301,7 @@
       viewersCount.textContent = Object.keys(data).length;
     });
 
-    window.addEventListener("beforeunload", () => {
-      remove(viewerRef);
-    });
+    window.addEventListener("beforeunload", () => remove(viewerRef));
 
     function drawWheel(players) {
       if (players.length === 0) return;
@@ -349,151 +319,10 @@
 
     function updatePlayersList() {
       if (players.length === 0) {
-        playersList.innerHTML = '<li class="player-item-panel">لم يتم إضافة لاعبين</li>';
+        playersList.innerHTML = '<li class="player-item-panel">🎮 لا يوجد لاعبين مشاركين حاليًا</li>';
         return;
       }
       playersList.innerHTML = players.map((p, i) => `<li class="player-item-panel">🎮 ${i + 1}. ${p.name}</li>`).join('');
-    }
-
-    function spinWheel(rotation, winner, duration) {
-      winnerBox.style.display = "none";
-      status.textContent = "🎬 جاري الدوران...";
-      let remaining = duration;
-      countdownContainer.classList.add("active");
-      countdownTime.textContent = remaining;
-
-      countdownInterval = setInterval(() => {
-        remaining--;
-        countdownTime.textContent = remaining;
-        if (remaining <= 0) clearInterval(countdownInterval);
-      }, 1000);
-
-      wheel.style.transition = `transform ${duration}s cubic-bezier(0.33, 1, 0.68, 1)`;
-      wheel.style.transform = `rotate(${rotation}deg)`;
-
-      setTimeout(() => {
-        clearInterval(countdownInterval);
-        countdownContainer.classList.remove("active");
-        status.textContent = "🎉 تم اختيار الفائز!";
-        winnerBox.style.display = "block";
-        winnerName.textContent = winner;
-        createConfetti();
-        createFireworks();
-        playWinnerSound();
-        playCheers();
-        playRandomSounds();
-        setTimeout(() => {
-          isSpinning = false;
-          status.textContent = "";
-        }, 5000);
-      }, duration * 1000);
-    }
-
-    function createConfetti() {
-      for (let i = 0; i < 80; i++) {
-        const confetti = document.createElement("div");
-        confetti.className = "confetti";
-        confetti.style.left = Math.random() * window.innerWidth + "px";
-        confetti.style.top = "-10px";
-        const colors = ["#FF1493", "#FFD700", "#00CED1", "#FF69B4", "#32CD32"];
-        confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-        document.body.appendChild(confetti);
-
-        const dur = Math.random() * 2 + 2.5;
-        const xMove = (Math.random() - 0.5) * 300;
-        confetti.animate([
-          { transform: "translateY(0) rotate(0deg) scale(1)", opacity: 1 },
-          { transform: `translateY(${window.innerHeight}px) translateX(${xMove}px) rotate(720deg) scale(0.5)`, opacity: 0 }
-        ], { duration: dur * 1000, easing: "cubic-bezier(0.25, 0.46, 0.45, 0.94)" });
-
-        setTimeout(() => confetti.remove(), dur * 1000);
-      }
-    }
-
-    function createFireworks() {
-      for (let i = 0; i < 20; i++) {
-        setTimeout(() => {
-          const x = Math.random() * window.innerWidth;
-          const y = Math.random() * window.innerHeight;
-          const colors = ["#FF1493", "#FFD700", "#00CED1", "#FF69B4", "#32CD32"];
-          
-          for (let j = 0; j < 30; j++) {
-            const spark = document.createElement("div");
-            spark.className = "confetti";
-            spark.style.left = x + "px";
-            spark.style.top = y + "px";
-            spark.style.background = colors[Math.floor(Math.random() * colors.length)];
-            document.body.appendChild(spark);
-
-            const angle = (j / 30) * Math.PI * 2;
-            const distance = 200 + Math.random() * 150;
-            const targetX = x + Math.cos(angle) * distance;
-            const targetY = y + Math.sin(angle) * distance;
-
-            spark.animate([
-              { transform: "translate(0,0) scale(1)", opacity: 1 },
-              { transform: `translate(${targetX - x}px, ${targetY - y}px) scale(0)`, opacity: 0 }
-            ], { duration: 1200, easing: "ease-out" });
-
-            setTimeout(() => spark.remove(), 1200);
-          }
-        }, i * 150);
-      }
-    }
-
-    function playWinnerSound() {
-      try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.frequency.setValueAtTime(800, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
-        gain.gain.setValueAtTime(0.3, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
-        osc.start(ctx.currentTime);
-        osc.stop(ctx.currentTime + 0.8);
-      } catch (e) {}
-    }
-
-    function playCheers() {
-      try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const buf = ctx.createBuffer(1, ctx.sampleRate * 0.5, ctx.sampleRate);
-        const data = buf.getChannelData(0);
-        for (let i = 0; i < buf.length; i++) {
-          data[i] = Math.random() * 2 - 1;
-        }
-        const noise = ctx.createBufferSource();
-        const gain = ctx.createGain();
-        gain.gain.setValueAtTime(0.2, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
-        noise.buffer = buf;
-        noise.connect(gain);
-        gain.connect(ctx.destination);
-        noise.start();
-      } catch (e) {}
-    }
-
-    function playRandomSounds() {
-      try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        for (let i = 0; i < 5; i++) {
-          setTimeout(() => {
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            const freq = 400 + Math.random() * 800;
-            osc.frequency.setValueAtTime(freq, ctx.currentTime);
-            gain.gain.setValueAtTime(0.1, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-            osc.start(ctx.currentTime);
-            osc.stop(ctx.currentTime + 0.3);
-          }, i * 100);
-        }
-      } catch (e) {}
     }
   </script>
 </body>
