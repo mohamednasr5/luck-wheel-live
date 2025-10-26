@@ -1,4 +1,69 @@
-<!DOCTYPE html>
+// Enter للإضافة السريعة
+    document.getElementById("playerName").addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        document.getElementById("addBtn").click();
+      }
+    });
+
+    // تصدير الأسماء إلى ملف txt
+    document.getElementById("exportBtn").onclick = () => {
+      if (players.length === 0) {
+        showStatus("⚠️ لا توجد أسماء لتصديرها", "error");
+        return;
+      }
+
+      const content = players.map(p => p.name).join("\n");
+      const blob = new Blob([content], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `لاعبين_${new Date().toLocaleDateString("ar-SA")}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showStatus("✅ تم تصدير الأسماء بنجاح", "success");
+    };
+
+    // استيراد الأسماء من ملف txt
+    document.getElementById("importBtn").onclick = () => {
+      document.getElementById("fileInput").click();
+    };
+
+    document.getElementById("fileInput").onchange = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const text = await file.text();
+      const names = text.split("\n").map(name => name.trim()).filter(name => name.length > 0);
+
+      if (names.length === 0) {
+        showStatus("⚠️ لم يتم العثور على أسماء في الملف", "error");
+        return;
+      }
+
+      let addedCount = 0;
+      let duplicateCount = 0;
+
+      for (const name of names) {
+        // التحقق من عدم وجود الاسم مسبقاً
+        const nameExists = players.some(p => p.name.toLowerCase() === name.toLowerCase());
+        if (!nameExists) {
+          await set(push(ref(db, "wheel/players")), { name });
+          addedCount++;
+        } else {
+          duplicateCount++;
+        }
+      }
+
+      let message = `✅ تم إضافة ${addedCount} لاعب`;
+      if (duplicateCount > 0) {
+        message += ` (${duplicateCount} أسماء مكررة)`;
+      }
+      showStatus(message, "success");
+      document.getElementById("fileInput").value = "";
+    };
+  </script><!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
@@ -466,6 +531,22 @@
       font-weight: 900;
     }
 
+    .viewers-count {
+      background: rgba(78,205,196,0.1);
+      border: 2px solid #4ECDC4;
+      padding: 15px;
+      border-radius: 10px;
+      font-size: 1.2rem;
+      margin: 15px 0;
+      text-align: center;
+    }
+
+    .viewers-count .number {
+      font-size: 2.5rem;
+      color: #4ECDC4;
+      font-weight: 900;
+    }
+
     .winner-box {
       background: linear-gradient(135deg, rgba(255,107,107,0.9), rgba(255,165,0,0.9));
       border-radius: 15px;
@@ -494,23 +575,20 @@
       margin: 15px 0;
     }
 
-    @media (max-width: 768px) {
-      .container {
-        grid-template-columns: 1fr;
-      }
+    .file-actions {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
 
-      h1 {
-        font-size: 1.8rem;
-      }
+    .file-actions button {
+      flex: 1;
+      padding: 10px 15px;
+      font-size: 0.95rem;
+    }
 
-      #wheel {
-        width: 250px;
-        height: 250px;
-      }
-
-      .login-box {
-        padding: 30px;
-      }
+    #fileInput {
+      display: none;
     }
   </style>
 </head>
@@ -550,6 +628,11 @@
           <div class="number" id="playerCount">0</div>
         </div>
 
+        <div class="viewers-count">
+          <div>👥 عدد المشاهدين</div>
+          <div class="number" id="viewersCount">0</div>
+        </div>
+
         <div class="winner-box" id="winnerBox">
           <div style="font-size: 1.5rem; margin-bottom: 10px;">🏆 الفائز الحظيظ 🏆</div>
           <div id="winnerName">-</div>
@@ -565,6 +648,12 @@
           <input type="text" id="playerName" placeholder="اكتب اسم اللاعب..." autocomplete="off">
           <button class="btn-primary" id="addBtn">➕ إضافة</button>
         </div>
+
+        <div class="file-actions">
+          <button class="btn-primary" id="exportBtn" style="background: linear-gradient(135deg, #A8E6CF, #56CCF2);">📥 تصدير</button>
+          <button class="btn-primary" id="importBtn" style="background: linear-gradient(135deg, #FFB366, #FF8B94);">📤 استيراد</button>
+        </div>
+        <input type="file" id="fileInput" accept=".txt" />
 
         <div class="players-list" id="playersList">
           <div style="text-align: center; opacity: 0.7; padding: 20px;">لا يوجد لاعبين حتى الآن</div>
@@ -621,6 +710,7 @@
     const winnerName = document.getElementById("winnerName");
     const playersList = document.getElementById("playersList");
     const playerCount = document.getElementById("playerCount");
+    const viewersCount = document.getElementById("viewersCount");
     const durationInput = document.getElementById("durationControl");
     const durationValue = document.getElementById("durationValue");
     const statusMessage = document.getElementById("statusMessage");
@@ -691,6 +781,13 @@
         spinWheelAdmin(data.rotation, data.duration, data.winner);
         setTimeout(() => { isSpinning = false; }, data.duration * 1000 + 500);
       }
+    });
+
+    // تحديث عدد المشاهدين
+    onValue(ref(db, "wheel/viewers"), (snapshot) => {
+      const data = snapshot.val() || {};
+      const count = Object.keys(data).length;
+      viewersCount.textContent = count;
     });
 
     // إضافة لاعب
@@ -817,6 +914,5 @@
         document.getElementById("addBtn").click();
       }
     });
-  </script>
 </body>
 </html>
