@@ -1,4 +1,54 @@
-<!DOCTYPE html>
+const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // عناصر تسجيل الدخول
+    const loginContainer = document.getElementById("loginContainer");
+    const mainContent = document.getElementById("mainContent");
+    const passwordInput = document.getElementById("passwordInput");
+    const togglePassword = document.getElementById("togglePassword");
+    const loginBtn = document.getElementById("loginBtn");
+    const loginError = document.getElementById("loginError");
+    const CORRECT_PASSWORD = "521988";
+
+    // تبديل رؤية كلمة السر
+    togglePassword.addEventListener("click", () => {
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        togglePassword.textContent = "👁️‍🗨️";
+      } else {
+        passwordInput.type = "password";
+        togglePassword.textContent = "👁️";
+      }
+    });
+
+    // التحقق من كلمة السر
+    function checkPassword() {
+      const password = passwordInput.value;
+      if (password === CORRECT_PASSWORD) {
+        loginContainer.style.display = "none";
+        mainContent.classList.add("logged-in");
+        localStorage.setItem("adminLogged", "true");
+      } else {
+        loginError.textContent = "⚠️ كلمة المرور غير صحيحة";
+        passwordInput.value = "";
+        setTimeout(() => {
+          loginError.textContent = "";
+        }, 3000);
+      }
+    }
+
+    loginBtn.addEventListener("click", checkPassword);
+    passwordInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") checkPassword();
+    });
+
+    // التحقق من تسجيل الدخول السابق
+    if (localStorage.getItem("adminLogged") === "true") {
+      loginContainer.style.display = "none";
+      mainContent.classList.add("logged-in");
+    }
+
+    const wheel = document.getElementById("wheel");<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
@@ -357,24 +407,153 @@
       font-weight: 900;
     }
 
-    @media (max-width: 768px) {
-      .container {
-        grid-template-columns: 1fr;
-      }
+    .login-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
 
-      h1 {
-        font-size: 1.8rem;
-      }
+    .login-box {
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 50px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.2);
+      text-align: center;
+      animation: slideDown 0.8s ease;
+    }
 
-      #wheel {
-        width: 250px;
-        height: 250px;
-      }
+    .login-box h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      background: linear-gradient(90deg, #FFD700, #FFA500, #FF69B4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .login-box p {
+      font-size: 1.1rem;
+      margin-bottom: 30px;
+      opacity: 0.9;
+    }
+
+    .password-group {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .password-group input {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.1);
+      color: white;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+    }
+
+    .password-group input:focus {
+      outline: none;
+      border-color: #FFD700;
+      background: rgba(255,255,255,0.2);
+      box-shadow: 0 0 15px rgba(255,215,0,0.3);
+    }
+
+    .password-group input::placeholder {
+      color: rgba(255,255,255,0.6);
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #FFD700;
+      cursor: pointer;
+      font-size: 1.2rem;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .toggle-password:hover {
+      transform: translateY(-50%) scale(1.2);
+    }
+
+    .login-btn {
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      color: #333;
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      font-family: inherit;
+      font-weight: bold;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255,215,0,0.4);
+    }
+
+    .login-error {
+      color: #FF6B6B;
+      margin-top: 15px;
+      font-weight: 600;
+      animation: shake 0.5s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+
+    .main-content {
+      display: none;
+    }
+
+    .main-content.logged-in {
+      display: block;
     }
   </style>
 </head>
 <body>
-  <div class="header">
+  <div class="login-container" id="loginContainer">
+    <div class="login-box">
+      <h1>🎛️ لوحة التحكم</h1>
+      <p>أدخل كلمة المرور للدخول</p>
+      
+      <div class="password-group">
+        <input type="password" id="passwordInput" placeholder="كلمة المرور" autocomplete="off">
+        <button class="toggle-password" id="togglePassword">👁️</button>
+      </div>
+
+      <button class="login-btn" id="loginBtn">دخول</button>
+      <div class="login-error" id="loginError"></div>
+    </div>
+  </div>
+
+  <div class="main-content" id="mainContent">
     <h1>🎛️ لوحة التحكم</h1>
     <div class="subtitle">دائرة الحظ المتزامنة</div>
   </div>
@@ -425,7 +604,7 @@
 
       <button class="btn-spin" id="spinBtn">▶️ ابدأ الدوران</button>
 
-      <div id="statusMessage"></div>
+      <div id="statusMessage">      </div>
     </div>
   </div>
 
@@ -536,6 +715,10 @@
         duration: spinDuration,
         timestamp: Date.now()
       });
+
+      setTimeout(() => {
+        spinBtn.disabled = false;
+      }, spinDuration * 1000 + 1000);
     };
 
     function drawWheel(players) {
@@ -557,10 +740,16 @@
       });
     }
 
-    function spinWheelAdmin(rotation, duration) {
+    function spinWheelAdmin(rotation, duration, winner) {
+      winnerBox.style.display = "none";
       wheel.style.transition = `transform ${duration}s cubic-bezier(0.33, 1, 0.68, 1)`;
       wheel.style.transform = `rotate(${rotation}deg)`;
-      spinWheelAdmin(rotation, spinDuration);
+      
+      setTimeout(() => {
+        winnerBox.style.display = "block";
+        winnerName.textContent = winner;
+        showStatus(`🎉 الفائز: ${winner}`, "success");
+      }, duration * 1000);
     }
 
     function updatePlayersList() {
